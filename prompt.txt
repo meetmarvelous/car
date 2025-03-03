@@ -1,0 +1,81 @@
+I want to convert the whole project code to MySQLi Procedural.
+
+files in the admin folder
+bookig-details.php 
+canceled-bookings.php 
+change-password.php 
+changeimage1.php 
+changeimage2.php 
+changeimage3.php 
+changeimage4.php 
+changeimage5.php 
+confirmed-bookings.php 
+create-brand.php 
+dashboard.php 
+edit-brand.php 
+edit-vehicle.php 
+index.php 
+logout.php 
+manage-bookings.php 
+manage-brands.php 
+manage-conactusquery.php 
+manage-pages.php 
+manage-subscribers.php 
+manage-vehicles.php 
+new-bookings.php 
+post-avehical.php 
+reg-users.php
+testimonials.php
+update-contactinfo.php
+vehical-details.php
+ Convert each to MySQLi Procedural
+Just give me the full page conversion code, dont explain
+let start with
+
+edit-vehicle.php   : 
+
+
+bookig-details.php 
+canceled-bookings.php 
+change-password.php 
+changeimage1.php 
+changeimage2.php 
+changeimage3.php 
+changeimage4.php 
+changeimage5.php 
+confirmed-bookings.php 
+create-brand.php 
+dashboard.php 
+edit-brand.php 
+edit-vehicle.php 
+index.php 
+logout.php 
+manage-bookings.php 
+manage-brands.php 
+manage-conactusquery.php 
+manage-pages.php 
+manage-subscribers.php 
+manage-vehicles.php 
+new-bookings.php 
+post-avehical.php 
+reg-users.php
+testimonials.php
+update-contactinfo.php
+
+Let move to folder - admin. 
+canceled-bookings.php   :
+
+.
+
+
+
+
+
+
+TITIABIKS VENTURES 
+Executive Chauffeur
+Titiabiks Ventures
+08056008908
+Prado,  Camry, Sienna
+
+Wine, Brown and Black
