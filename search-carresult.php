@@ -45,7 +45,7 @@ error_reporting(0);
 <body>
 
   <!-- Start Switcher -->
-  <?php include('includes/colorswitcher.php'); ?>
+  <?php // include('includes/colorswitcher.php'); ?>
   <!-- /Switcher -->
 
   <!--Header-->

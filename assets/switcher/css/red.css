@@ -58,13 +58,13 @@ a,
 .header_style2 .dropdown-menu > li > a:focus, 
 .header_style2 .dropdown-menu > li > a:hover, 
 .blog-info-box .share_article:hover ul li a:hover {
-	color:#fa2837;
-	fill: #fa2837;
+	color:#a0111f;
+	fill: #a0111f;
 }
 
 a:hover, a:focus, .btn-link:hover {
-	color:#ff0012;
-	fill: #ff0012;
+	color:#6d071a;
+	fill: #6d071a;
 }
 
 .btn, 
@@ -100,14 +100,14 @@ a:hover, a:focus, .btn-link:hover {
 .main_bg, 
 .slider .slider-handle, .slider .slider-selection, 
 .primary-bg {
-  background: #fa2837 none repeat scroll 0 0;
-  fill: #fa2837;
+  background: #a0111f none repeat scroll 0 0;
+  fill: #a0111f;
 }
 .btn:hover, .btn:focus, 
 .search_other:hover, 
 #other_info:hover {
 	background-color: #c60210;
-	fill: #fb4d59;
+	fill: #d72638;
 }
 
 .nav-tabs > li.active > a, 
@@ -124,14 +124,14 @@ blockquote,
 .navbar-default .navbar-toggle, 
 .owl-buttons div, 
 .about_info .icon_box {
-	border-color: #fa2837;
+	border-color: #a0111f;
 }
 
 .recent-tab .nav.nav-tabs li.active::after {
-	border-color: #fa2837 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+	border-color: #a0111f rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
 }
 .td_divider:after {
-	border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0 ) rgba(0, 0, 0, 0 ) #fa2837 ;
+	border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0 ) rgba(0, 0, 0, 0 ) #a0111f ;
 }
 
 .navbar-nav > li > .dropdown-menu li {
@@ -140,7 +140,7 @@ blockquote,
 
 @media (max-width:767px) {
 .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus, .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover {
-	color:#fa2837;	
+	color:#a0111f;	
 }
 
 

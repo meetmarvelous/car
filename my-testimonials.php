@@ -45,7 +45,7 @@ if (strlen($_SESSION['login']) == 0) {
   </head>
 
   <body>
-    <?php include('includes/colorswitcher.php'); ?>
+    <?php // include('includes/colorswitcher.php'); ?>
     <!-- /Switcher -->
 
     <!--Header-->

@@ -76,7 +76,7 @@ if (isset($_POST['send'])) {
 <body>
 
   <!-- Start Switcher -->
-  <?php include('includes/colorswitcher.php'); ?>
+  <?php // include('includes/colorswitcher.php'); ?>
   <!-- /Switcher -->
 
   <!--Header-->

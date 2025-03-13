@@ -74,79 +74,79 @@ if (strlen($_SESSION['alogin']) == 0) {
                             <div class="panel panel-default">
                                 <div class="panel-heading">Bookings Info</div>
                                 <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Name</th>
+                                                    <th>Booking No.</th>
+                                                    <th>Vehicle</th>
+                                                    <th>From Date</th>
+                                                    <th>To Date</th>
+                                                    <th>Status</th>
+                                                    <th>Posting date</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Name</th>
+                                                    <th>Booking No.</th>
+                                                    <th>Vehicle</th>
+                                                    <th>From Date</th>
+                                                    <th>To Date</th>
+                                                    <th>Status</th>
+                                                    <th>Posting date</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
 
-                                    <table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Name</th>
-                                                <th>Booking No.</th>
-                                                <th>Vehicle</th>
-                                                <th>From Date</th>
-                                                <th>To Date</th>
-                                                <th>Status</th>
-                                                <th>Posting date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Name</th>
-                                                <th>Booking No.</th>
-                                                <th>Vehicle</th>
-                                                <th>From Date</th>
-                                                <th>To Date</th>
-                                                <th>Status</th>
-                                                <th>Posting date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
-
-                                            <?php
-                                            $status = 0;
-                                            $sql = "SELECT tblusers.FullName, tblbrands.BrandName, tblvehicles.VehiclesTitle, tblbooking.FromDate, tblbooking.ToDate, tblbooking.message, tblbooking.VehicleId as vid, tblbooking.Status, tblbooking.PostingDate, tblbooking.id, tblbooking.BookingNumber 
+                                                <?php
+                                                $status = 0;
+                                                $sql = "SELECT tblusers.FullName, tblbrands.BrandName, tblvehicles.VehiclesTitle, tblbooking.FromDate, tblbooking.ToDate, tblbooking.message, tblbooking.VehicleId as vid, tblbooking.Status, tblbooking.PostingDate, tblbooking.id, tblbooking.BookingNumber 
                                             FROM tblbooking 
                                             JOIN tblvehicles ON tblvehicles.id = tblbooking.VehicleId 
                                             JOIN tblusers ON tblusers.EmailId = tblbooking.userEmail 
                                             JOIN tblbrands ON tblvehicles.VehiclesBrand = tblbrands.id 
                                             WHERE tblbooking.Status = ?";
-                                            $stmt = mysqli_prepare($con, $sql);
-                                            mysqli_stmt_bind_param($stmt, 'i', $status);
-                                            mysqli_stmt_execute($stmt);
-                                            $result = mysqli_stmt_get_result($stmt);
-                                            $cnt = 1;
-                                            if (mysqli_num_rows($result) > 0) {
-                                                while ($row = mysqli_fetch_assoc($result)) {                ?>
-                                                    <tr>
-                                                        <td><?php echo htmlentities($cnt); ?></td>
-                                                        <td><?php echo htmlentities($row['FullName']); ?></td>
-                                                        <td><?php echo htmlentities($row['BookingNumber']); ?></td>
-                                                        <td><a href="edit-vehicle.php?id=<?php echo htmlentities($row['vid']); ?>"><?php echo htmlentities($row['BrandName']); ?>, <?php echo htmlentities($row['VehiclesTitle']); ?></a></td>
-                                                        <td><?php echo htmlentities($row['FromDate']); ?></td>
-                                                        <td><?php echo htmlentities($row['ToDate']); ?></td>
-                                                        <td><?php
-                                                            if ($row['Status'] == 0) {
-                                                                echo htmlentities('Not Confirmed yet');
-                                                            } else if ($row['Status'] == 1) {
-                                                                echo htmlentities('Confirmed');
-                                                            } else {
-                                                                echo htmlentities('Cancelled');
-                                                            }
-                                                            ?></td>
-                                                        <td><?php echo htmlentities($row['PostingDate']); ?></td>
-                                                        <td>
-                                                            <a href="bookig-details.php?bid=<?php echo htmlentities($row['id']); ?>">View</a>
-                                                        </td>
-                                                    </tr>
-                                            <?php $cnt = $cnt + 1;
-                                                }
-                                            } ?>
+                                                $stmt = mysqli_prepare($con, $sql);
+                                                mysqli_stmt_bind_param($stmt, 'i', $status);
+                                                mysqli_stmt_execute($stmt);
+                                                $result = mysqli_stmt_get_result($stmt);
+                                                $cnt = 1;
+                                                if (mysqli_num_rows($result) > 0) {
+                                                    while ($row = mysqli_fetch_assoc($result)) {                ?>
+                                                        <tr>
+                                                            <td><?php echo htmlentities($cnt); ?></td>
+                                                            <td><?php echo htmlentities($row['FullName']); ?></td>
+                                                            <td><?php echo htmlentities($row['BookingNumber']); ?></td>
+                                                            <td><a href="edit-vehicle.php?id=<?php echo htmlentities($row['vid']); ?>"><?php echo htmlentities($row['BrandName']); ?>, <?php echo htmlentities($row['VehiclesTitle']); ?></a></td>
+                                                            <td><?php echo htmlentities($row['FromDate']); ?></td>
+                                                            <td><?php echo htmlentities($row['ToDate']); ?></td>
+                                                            <td><?php
+                                                                if ($row['Status'] == 0) {
+                                                                    echo htmlentities('Not Confirmed yet');
+                                                                } else if ($row['Status'] == 1) {
+                                                                    echo htmlentities('Confirmed');
+                                                                } else {
+                                                                    echo htmlentities('Cancelled');
+                                                                }
+                                                                ?></td>
+                                                            <td><?php echo htmlentities($row['PostingDate']); ?></td>
+                                                            <td>
+                                                                <a href="bookig-details.php?bid=<?php echo htmlentities($row['id']); ?>">View</a>
+                                                            </td>
+                                                        </tr>
+                                                <?php $cnt = $cnt + 1;
+                                                    }
+                                                } ?>
 
-                                        </tbody>
-                                    </table>
-
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 

@@ -90,6 +90,7 @@ else{
                             <div class="panel-body">
                             <?php if($error){?><div class="errorWrap"><strong>ERROR</strong>:<?php echo htmlentities($error); ?> </div><?php } 
                             else if($msg){?><div class="succWrap"><strong>SUCCESS</strong>:<?php echo htmlentities($msg); ?> </div><?php }?>
+                            <div class="table-responsive">
                                 <table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
@@ -140,6 +141,7 @@ if(mysqli_num_rows($result) > 0)
                                         
                                     </tbody>
                                 </table>
+                            </div>
 
                             </div>
                         </div>

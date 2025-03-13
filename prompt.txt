@@ -79,3 +79,6 @@ Titiabiks Ventures
 Prado,  Camry, Sienna
 
 Wine, Brown and Black
+
+I act as a world class web developer.
+I want to integrate paystack payment system to the project in Nigeria naira mainly, in such a way that a user can pay to secure a booking after 
