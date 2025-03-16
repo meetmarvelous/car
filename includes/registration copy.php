@@ -5,16 +5,9 @@ if (isset($_POST['signup'])) {
   $email = $_POST['emailid'];
   $mobile = $_POST['mobileno'];
   $password = md5($_POST['password']);
-  
-  // Insert user data into the database
   $sql = "INSERT INTO tblusers (FullName, EmailId, ContactNo, Password) VALUES ('$fname', '$email', '$mobile', '$password')";
   if (mysqli_query($con, $sql)) {
-    $_SESSION['login'] = $email; // Store email in session
-    $_SESSION['fname'] = $fname; // Store full name in session
-    // Redirect to the current page or homepage after successful registration
     echo "<script>alert('Registration successful. Now you can login');</script>";
-    $currentpage = $_SERVER['REQUEST_URI'];
-    echo "<script type='text/javascript'> document.location = '$currentpage'; </script>";
   } else {
     echo "<script>alert('Something went wrong. Please try again');</script>";
   }

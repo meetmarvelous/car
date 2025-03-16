@@ -1,21 +1,21 @@
 <?php
 if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = md5($_POST['password']);
+  $email = $_POST['email'];
+  $password = md5($_POST['password']);
 
-    // Query to check if the user exists
-    $sql = "SELECT EmailId, Password, FullName FROM tblusers WHERE EmailId = '$email' AND Password = '$password'";
-    $query = mysqli_query($con, $sql);
+  // Query to check if the user exists
+  $sql = "SELECT EmailId, Password, FullName FROM tblusers WHERE EmailId = '$email' AND Password = '$password'";
+  $query = mysqli_query($con, $sql);
 
-    if (mysqli_num_rows($query) > 0) {
-        $result = mysqli_fetch_assoc($query);
-        $_SESSION['login'] = $email;
-        $_SESSION['fname'] = $result['FullName'];
-        $currentpage = $_SERVER['REQUEST_URI'];
-        echo "<script type='text/javascript'> document.location = '$currentpage'; </script>";
-    } else {
-        echo "<script>alert('Invalid Details');</script>";
-    }
+  if (mysqli_num_rows($query) > 0) {
+    $result = mysqli_fetch_assoc($query);
+    $_SESSION['login'] = $email;
+    $_SESSION['fname'] = $result['FullName'];
+    $currentpage = $_SERVER['REQUEST_URI'];
+    echo "<script type='text/javascript'> document.location = '$currentpage'; </script>";
+  } else {
+    echo "<script>alert('Invalid Details');</script>";
+  }
 }
 ?>
 

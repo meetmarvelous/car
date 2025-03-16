@@ -1,0 +1,266 @@
+
+/* Custom Colors */
+:root {
+  --primary: #a0111f;
+  --secondary: #6d071a;
+  --accent: #e0e0e0;
+  --light: #f8f9fa;
+}
+
+/* Global Styles */
+.custom-container {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.about-section {
+  padding: 80px 20px;
+  background: white;
+}
+
+.logo-container-about {
+  text-align: center;
+  padding: 30px; /* Reduced padding for better balance */
+  background: var(--light);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  transition: transform 0.3s ease;
+}
+
+.logo-container-about:hover {
+  transform: scale(1.03); /* Slightly toned down hover effect */
+}
+
+.about-logo {
+  max-width: 200px; /* Reduced logo size */
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.about-logo:hover {
+  transform: scale(1.05); /* Subtle zoom effect on logo hover */
+}
+
+.text-column {
+  padding: 0 40px;
+}
+
+.text-column .section-title {
+  margin-bottom: 25px;
+  font-size: 2.2em;
+  color: var(--primary);
+}
+
+.text-column .section-text {
+  font-size: 1.1em;
+  color: #444;
+  line-height: 1.8;
+}
+
+.services-section {
+  padding: 60px 20px;
+}
+
+.service-card {
+  text-align: center;
+  padding: 30px;
+  margin: 20px 0;
+  transition: transform 0.3s ease;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.service-icon {
+  font-size: 3em;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+
+.service-title {
+  color: var(--secondary);
+  font-size: 1.5em;
+  margin-bottom: 15px;
+}
+
+.service-desc {
+  color: #666;
+}
+
+.why-us-section {
+  padding: 60px 20px;
+  background: var(--light);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin: 30px 0;
+  padding: 20px;
+  transition: background 0.3s ease;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.feature-item:hover {
+  background: rgba(160, 17, 31, 0.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  font-size: 2em;
+  color: var(--primary);
+  margin-right: 20px;
+}
+
+.feature-title {
+  color: var(--secondary);
+  font-size: 1.3em;
+  margin-bottom: 8px;
+}
+
+.feature-desc {
+  color: #666;
+}
+
+.cta-section {
+  background: var(--primary);
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.cta-title {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.cta-text {
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+
+.contact-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.contact-item {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.contact-item:hover {
+  transform: scale(1.05);
+}
+
+.contact-item i {
+  margin-right: 15px;
+  font-size: 1.2em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .logo-container-about {
+    margin: 0 auto 30px;
+    padding: 20px;
+  }
+
+  .text-column {
+    padding: 0 20px;
+  }
+
+  .about-logo {
+    max-width: 150px; /* Further reduced for mobile */
+  }
+
+  .service-card {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 1.7em;
+  }
+}    
+
+
+    /* Custom Colors */
+:root {
+  --primary: #a0111f;
+  --secondary: #6d071a;
+  --accent: #e0e0e0;
+  --light: #f8f9fa;
+}
+
+/* Global Styles */
+.custom-container {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.services-section {
+  padding: 60px 20px;
+  background: var(--light);
+}
+
+.service-cards {
+  display: flex;
+  flex-wrap: wrap; /* Ensures cards wrap properly */
+  gap: 20px; /* Adds consistent spacing between cards */
+  justify-content: center; /* Centers cards on larger screens */
+}
+
+.service-card {
+  text-align: center;
+  padding: 30px;
+  margin: 0; /* Removed unnecessary margin */
+  transition: transform 0.3s ease;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1 1 calc(33.33% - 40px); /* Adjusts card width dynamically */
+  max-width: 300px; /* Limits maximum width for consistency */
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.service-icon {
+  font-size: 3em;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+
+.service-title {
+  color: var(--secondary);
+  font-size: 1.5em;
+  margin-bottom: 15px;
+}
+
+.service-desc {
+  color: #666;
+  font-size: 0.9em; /* Slightly reduced font size for better readability */
+}
+
+/* Responsive Design */
+
+@media (max-width: 992px) {
+  .service-card {
+    flex: 1 1 100%; /* One card per row on small screens */
+    max-width: none;
+  }
+}

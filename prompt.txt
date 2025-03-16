@@ -1,84 +1,32 @@
-I want to convert the whole project code to MySQLi Procedural.
+I want to convert the whole project code to PHP MySQLi Procedural.
 
-files in the admin folder
-bookig-details.php 
-canceled-bookings.php 
-change-password.php 
-changeimage1.php 
-changeimage2.php 
-changeimage3.php 
-changeimage4.php 
-changeimage5.php 
-confirmed-bookings.php 
-create-brand.php 
-dashboard.php 
-edit-brand.php 
-edit-vehicle.php 
-index.php 
-logout.php 
-manage-bookings.php 
-manage-brands.php 
-manage-conactusquery.php 
-manage-pages.php 
-manage-subscribers.php 
-manage-vehicles.php 
-new-bookings.php 
-post-avehical.php 
-reg-users.php
-testimonials.php
-update-contactinfo.php
-vehical-details.php
- Convert each to MySQLi Procedural
-Just give me the full page conversion code, dont explain
+
+Convert each to MySQLi Procedural
+Just give me the full page conversion code, don't explain
 let start with
 
 edit-vehicle.php   : 
+______________________________________________
+
+Act like a world-class frontend developer. Improve the entire page's aesthetics with better design choices, modern UI elements, and enhanced layouts. Use frameworks like using Bootstrap v3.3.7  or Font Awesome 4.7.0 and css only to make the page visually appealing. Optimize user experience in every possible way, ensuring responsiveness, smooth interactions, and intuitive navigation. Elevate the overall look and feel to a professional standard.
+
+Note: Do not to use bootstrap classes in your custom css code cos I dont want it to affect other sections, just use another class that isn't boostrap related for css
+Give me section <section> code in html only. Dont give me the head content, just give me the css code seperately. 
+
+primary code #a0111f
+secondary color #6d071a
+every other key color should be simlar to that, now update
 
 
-bookig-details.php 
-canceled-bookings.php 
-change-password.php 
-changeimage1.php 
-changeimage2.php 
-changeimage3.php 
-changeimage4.php 
-changeimage5.php 
-confirmed-bookings.php 
-create-brand.php 
-dashboard.php 
-edit-brand.php 
-edit-vehicle.php 
-index.php 
-logout.php 
-manage-bookings.php 
-manage-brands.php 
-manage-conactusquery.php 
-manage-pages.php 
-manage-subscribers.php 
-manage-vehicles.php 
-new-bookings.php 
-post-avehical.php 
-reg-users.php
-testimonials.php
-update-contactinfo.php
+use the logo in the  <div class="about-section">, two col-sm-6 , logo on one side, text on the other side. it should be beautiful pls. update the code
 
-Let move to folder - admin. 
-canceled-bookings.php   :
+______________________________________________
 
-.
+I want to use passowrd hash and password verify function instead of md5
+Using md5() for password hashing is insecure. Switch to password_hash() and password_verify() for better security.
 
+Allow automatic login when signup, instead of having to login again after signup
 
+login.php :
 
-
-
-
-TITIABIKS VENTURES 
-Executive Chauffeur
-Titiabiks Ventures
-08056008908
-Prado,  Camry, Sienna
-
-Wine, Brown and Black
-
-I act as a world class web developer.
-I want to integrate paystack payment system to the project in Nigeria naira mainly, in such a way that a user can pay to secure a booking after 
+signup.php :

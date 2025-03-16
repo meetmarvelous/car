@@ -1064,11 +1064,11 @@ nav.navbar {
 	3.1. Banner
 -------------------------------*/
 .banner-section {
-  background-image: url("../images/banner-image.jpg");
+  background-image: url("../images/banner-image2.jpg");
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-  padding: 160px 0;
+  padding: 250px 0;
   position: relative;
 }
 .banner-section::after {
@@ -4669,7 +4669,7 @@ h3 {
 	height:100%;
 }
 .banner-section {
-  padding: 80px 0;
+  padding: 250px 0;
 }
 .banner_content {
   padding-left: 0;
@@ -5152,7 +5152,7 @@ h3 {
 	height:100%;
 }
 .banner-section {
-  padding: 100px 0;
+  padding: 250px 0;
 }
 .looking-car {
   padding: 30px;
