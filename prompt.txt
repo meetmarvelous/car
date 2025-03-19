@@ -30,3 +30,84 @@ Allow automatic login when signup, instead of having to login again after signup
 login.php :
 
 signup.php :
+
+______________________________________________
+
+index.php :
+
+important css code
+Bootstrap v3.3.7
+
+style.css :
+
+marvel.css :
+
+
+
+Objective:
+Add a responsive "Make Reservation" form that works seamlessly on both desktop and mobile screens, featuring a modern and visually appealing UI with a car rental theme to the index.php page - Banner Section in the index page
+primary code #a0111f
+secondary color #6d071a
+every other key color should be simlar to that, now update
+
+1. Layout & Structure.
+Background Image:
+use a full-width, high-quality background image with an overlay for better readability.
+
+Form Layout:
+
+Use a grid-based layout on desktop (4-column or 2-row structure).
+
+Use a stacked layout on mobile (single-column).
+
+Ensure form elements are well-spaced and aligned for readability.
+
+
+---
+
+2. Form Fields
+
+1. Pick-up Date (Date Picker)
+
+Uses <input type="date"> with a calendar icon.
+
+Styled with a rounded border and subtle shadow.
+
+2. Return Date (Optional Date Picker)
+
+Can be disabled by default until activated.
+
+3. Pick-up Location (Input) 
+
+
+
+
+3. CTA Button ("Make Reservation")
+
+Desktop:
+
+Centered below the form.
+
+Uses a bold primary colour background with white text.
+
+Hover effect: Slightly darker with a smooth transition.
+
+This code ensures full responsiveness by using CSS, Bootstrap Grid and Media Queries.
+
+
+I want to convert the whole project code. Dont do anything yet. I will tell you what to do later.
+
+this is the file structure and I will give you the code one after the other.
+
+
+on this page, ensure the 
+From Date:
+comes before 
+To Date:
+
+if not , send an alert to explain what to do and also ensure
+
+Car already booked for these days alert should refresh on same page, not car-listing.php
+
+        echo "<script>alert('Car already booked for these days');</script>";
+        echo "<script type='text/javascript'> document.location = ; </script>";

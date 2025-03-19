@@ -24,12 +24,17 @@ admin/post-avehical.php
 admin/reg-users.php
 admin/testimonials.php
 admin/update-contactinfo.php
-assets/css/
+assets/css/marvel.css
+assets/css/style.css
 assets/images/
 assets/js/
 includes/config.php
 includes/header.php
 includes/footer.php
+includes/forgotpassword.php
+includes/login.php
+includes/registration.php
+includes/sidebar.php
 includes/db.php
 car-listing.php
 check_availability.php
@@ -46,6 +51,88 @@ search.php
 update-password.php
 vehical-details.php
 
+
+admin/
+  bookig-details.php
+  canceled-bookings.php
+  change-password.php
+  changeimage1.php
+  changeimage2.php
+  changeimage3.php
+  changeimage4.php
+  changeimage5.php
+  confirmed-bookings.php
+  create-brand.php
+  css/
+  edit-brand.php
+  edit-vehicle.php
+  index.php
+  logout.php
+  manage-bookings.php
+  manage-brands.php
+  manage-conactusquery.php
+  manage-pages.php
+  manage-subscribers.php
+  manage-vehicles.php
+  new-bookings.php
+  post-avehical.php
+  reg-users.php
+  testimonials.php
+  update-contactinfo.php
+assets/
+  css/
+    style.css
+    marvel.css
+  images/
+    favicon-icon/
+      apple-touch-icon-57-precomposed.png
+      apple-touch-icon-72-precomposed.png
+      apple-touch-icon-114-precomposed.html
+      apple-touch-icon-144-precomposed.png
+      favicon.png
+  js/
+    bootstrap.min.js
+    interface.js
+    jquery.min.js
+    slick.min.js
+    owl.carousel.min.js
+    bootstrap-slider.min.js
+  switcher/
+    css/
+      switcher.css
+      red.css
+      orange.css
+      blue.css
+      pink.css
+      green.css
+      purple.css
+    js/
+      switcher.js
+includes/
+  config.php
+  header.php
+  footer.php
+  db.php
+  forgotpassword.php
+  login.php
+  registration.php
+  sidebar.php
+car-listing.php
+check_availability.php
+contact-us.php
+index.php
+logout.php
+my-booking.php
+my-testimonials.php
+page.php
+post-testimonial.php
+profile.php
+search-carresult.php
+search.php
+update-password.php
+vehical-details.php
+payment_form.php
+init_payment.php
 ______________________________________________
 
 │   └── update-contactinfo.php

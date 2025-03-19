@@ -12,13 +12,6 @@ if (isset($_POST['submit'])) {
   $vhid = $_GET['vhid'];
   $bookingno = mt_rand(100000000, 999999999);
 
-  // Validate From Date and To Date
-  if (strtotime($fromdate) >= strtotime($todate)) {
-    echo "<script>alert('Please ensure the start date comes before the end date.');</script>";
-    echo "<script>window.location.href = window.location.href;</script>"; // Refresh the page
-    exit();
-  }
-
   // Check for overlapping bookings
   $ret = "SELECT * FROM tblbooking WHERE 
             ('$fromdate' BETWEEN date(FromDate) AND date(ToDate) OR 
@@ -34,21 +27,15 @@ if (isset($_POST['submit'])) {
     $result = mysqli_query($con, $sql);
 
     if ($result) {
-      // Redirect to payment form
-      $_SESSION['bookingno'] = $bookingno;
-      $_SESSION['vhid'] = $vhid;
-      $_SESSION['fromdate'] = $fromdate;
-      $_SESSION['todate'] = $todate;
-      $_SESSION['message'] = $message;
-      header("Location: payment_form.php");
-      exit();
+      echo "<script>alert('Booking successful.');</script>";
+      echo "<script type='text/javascript'> document.location = 'my-booking.php'; </script>";
     } else {
       echo "<script>alert('Something went wrong. Please try again');</script>";
-      echo "<script>window.location.href = window.location.href;</script>"; // Refresh the page
+      echo "<script type='text/javascript'> document.location = 'car-listing.php'; </script>";
     }
   } else {
-    echo "<script>alert('Car already booked for these days.');</script>";
-    echo "<script>window.location.href = window.location.href;</script>"; // Refresh the page
+    echo "<script>alert('Car already booked for these days');</script>";
+    echo "<script type='text/javascript'> document.location = 'car-listing.php'; </script>";
   }
 }
 ?>
@@ -94,15 +81,14 @@ if (isset($_POST['submit'])) {
   ?>
   <!-- /Switcher -->
 
-  <!-- Header -->
+  <!--Header-->
   <?php include('includes/header.php'); ?>
+  <!-- /Header -->
 
-  <!-- Listing-Image-Slider -->
+  <!--Listing-Image-Slider-->
   <?php
   $vhid = intval($_GET['vhid']);
-  $sql = "SELECT tblvehicles.*, tblbrands.BrandName, tblbrands.id AS bid FROM tblvehicles 
-            JOIN tblbrands ON tblbrands.id = tblvehicles.VehiclesBrand 
-            WHERE tblvehicles.id = '$vhid'";
+  $sql = "SELECT tblvehicles.*, tblbrands.BrandName, tblbrands.id AS bid FROM tblvehicles JOIN tblbrands ON tblbrands.id = tblvehicles.VehiclesBrand WHERE tblvehicles.id = '$vhid'";
   $result = mysqli_query($con, $sql);
   $cnt = 1;
   if (mysqli_num_rows($result) > 0) {
@@ -110,26 +96,26 @@ if (isset($_POST['submit'])) {
       $_SESSION['brndid'] = $row['bid'];
   ?>
       <section id="listing_img_slider">
-        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage1']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
-        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage2']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
-        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage3']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
-        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage4']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <div><img src="admin/img/vehicleimages/<?php echo htmlentities($row['Vimage1']); ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <div><img src="admin/img/vehicleimages/<?php echo htmlentities($row['Vimage2']); ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <div><img src="admin/img/vehicleimages/<?php echo htmlentities($row['Vimage3']); ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <div><img src="admin/img/vehicleimages/<?php echo htmlentities($row['Vimage4']); ?>" class="img-responsive" alt="image" width="900" height="560"></div>
         <?php if ($row['Vimage5'] != "") { ?>
-          <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage5']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+          <div><img src="admin/img/vehicleimages/<?php echo htmlentities($row['Vimage5']); ?>" class="img-responsive" alt="image" width="900" height="560"></div>
         <?php } ?>
       </section>
-      <!-- /Listing-Image-Slider -->
+      <!--/Listing-Image-Slider-->
 
-      <!-- Listing-detail -->
+      <!--Listing-detail-->
       <section class="listing-detail">
         <div class="container">
           <div class="listing_detail_head row">
             <div class="col-md-9">
-              <h2><?= htmlentities($row['BrandName']) ?>, <?= htmlentities($row['VehiclesTitle']) ?></h2>
+              <h2><?php echo htmlentities($row['BrandName']); ?>, <?php echo htmlentities($row['VehiclesTitle']); ?></h2>
             </div>
             <div class="col-md-3">
               <div class="price_info">
-                <p>₦<?= htmlentities($row['PricePerDay']) ?></p>Per Day
+                <p>₦<?php echo htmlentities($row['PricePerDay']); ?> </p>Per Day
               </div>
             </div>
           </div>
@@ -138,15 +124,15 @@ if (isset($_POST['submit'])) {
               <div class="main_features">
                 <ul>
                   <li> <i class="fa fa-calendar" aria-hidden="true"></i>
-                    <h5><?= htmlentities($row['ModelYear']) ?></h5>
+                    <h5><?php echo htmlentities($row['ModelYear']); ?></h5>
                     <p>Reg.Year</p>
                   </li>
                   <li> <i class="fa fa-cogs" aria-hidden="true"></i>
-                    <h5><?= htmlentities($row['FuelType']) ?></h5>
+                    <h5><?php echo htmlentities($row['FuelType']); ?></h5>
                     <p>Fuel Type</p>
                   </li>
                   <li> <i class="fa fa-user-plus" aria-hidden="true"></i>
-                    <h5><?= htmlentities($row['SeatingCapacity']) ?></h5>
+                    <h5><?php echo htmlentities($row['SeatingCapacity']); ?></h5>
                     <p>Seats</p>
                   </li>
                 </ul>
@@ -161,13 +147,14 @@ if (isset($_POST['submit'])) {
 
                   <!-- Tab panes -->
                   <div class="tab-content">
-                    <!-- Vehicle Overview -->
+                    <!-- vehicle-overview -->
                     <div role="tabpanel" class="tab-pane active" id="vehicle-overview">
-                      <p><?= htmlentities($row['VehiclesOverview']) ?></p>
+                      <p><?php echo htmlentities($row['VehiclesOverview']); ?></p>
                     </div>
 
                     <!-- Accessories -->
                     <div role="tabpanel" class="tab-pane" id="accessories">
+                      <!--Accessories-->
                       <table>
                         <thead>
                           <tr>
@@ -177,51 +164,99 @@ if (isset($_POST['submit'])) {
                         <tbody>
                           <tr>
                             <td>Air Conditioner</td>
-                            <td><?= $row['AirConditioner'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['AirConditioner'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>AntiLock Braking System</td>
-                            <td><?= $row['AntiLockBrakingSystem'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['AntiLockBrakingSystem'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Power Steering</td>
-                            <td><?= $row['PowerSteering'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['PowerSteering'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Power Windows</td>
-                            <td><?= $row['PowerWindows'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['PowerWindows'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>CD Player</td>
-                            <td><?= $row['CDPlayer'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['CDPlayer'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Leather Seats</td>
-                            <td><?= $row['LeatherSeats'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['LeatherSeats'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Central Locking</td>
-                            <td><?= $row['CentralLocking'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['CentralLocking'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Power Door Locks</td>
-                            <td><?= $row['PowerDoorLocks'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['PowerDoorLocks'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Brake Assist</td>
-                            <td><?= $row['BrakeAssist'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['BrakeAssist'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Driver Airbag</td>
-                            <td><?= $row['DriverAirbag'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['DriverAirbag'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Passenger Airbag</td>
-                            <td><?= $row['PassengerAirbag'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['PassengerAirbag'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                           <tr>
                             <td>Crash Sensor</td>
-                            <td><?= $row['CrashSensor'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                            <?php if ($row['CrashSensor'] == 1) { ?>
+                              <td><i class="fa fa-check" aria-hidden="true"></i></td>
+                            <?php } else { ?>
+                              <td><i class="fa fa-close" aria-hidden="true"></i></td>
+                            <?php } ?>
                           </tr>
                         </tbody>
                       </table>
@@ -230,19 +265,12 @@ if (isset($_POST['submit'])) {
                 </div>
               </div>
             </div>
-        <?php
-      }
-    }
-        ?>
-        <!-- Side-Bar -->
+        <?php }
+    } ?>
+        <!--Side-Bar-->
         <aside class="col-md-3">
           <div class="share_vehicle">
-            <p>Share:
-              <a href="#"><i class="fa fa-facebook-square" aria-hidden="true"></i></a>
-              <a href="#"><i class="fa fa-twitter-square" aria-hidden="true"></i></a>
-              <a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a>
-              <a href="#"><i class="fa fa-google-plus-square" aria-hidden="true"></i></a>
-            </p>
+            <p>Share: <a href="#"><i class="fa fa-facebook-square" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-twitter-square" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-google-plus-square" aria-hidden="true"></i></a> </p>
           </div>
           <div class="sidebar_widget">
             <div class="widget_heading">
@@ -251,11 +279,11 @@ if (isset($_POST['submit'])) {
             <form method="post">
               <div class="form-group">
                 <label>From Date:</label>
-                <input type="date" class="form-control" name="fromdate" required>
+                <input type="date" class="form-control" name="fromdate" placeholder="From Date" required>
               </div>
               <div class="form-group">
                 <label>To Date:</label>
-                <input type="date" class="form-control" name="todate" required>
+                <input type="date" class="form-control" name="todate" placeholder="To Date" required>
               </div>
               <div class="form-group">
                 <textarea rows="4" class="form-control" name="message" placeholder="Message" required></textarea>
@@ -270,7 +298,7 @@ if (isset($_POST['submit'])) {
             </form>
           </div>
         </aside>
-        <!-- /Side-Bar -->
+        <!--/Side-Bar-->
           </div>
 
           <div class="space-20"></div>
@@ -329,6 +357,7 @@ if (isset($_POST['submit'])) {
 
       <!--Forgot-password-Form -->
       <?php include('includes/forgotpassword.php'); ?>
+
       <script src="assets/js/jquery.min.js"></script>
       <script src="assets/js/bootstrap.min.js"></script>
       <script src="assets/js/interface.js"></script>
