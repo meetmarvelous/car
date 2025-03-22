@@ -54,7 +54,8 @@ if (strlen($_SESSION['login']) == 0) {
   <body>
 
     <!-- Start Switcher -->
-    <?php // include('includes/colorswitcher.php'); ?>
+    <?php // include('includes/colorswitcher.php'); 
+    ?>
     <!-- /Switcher -->
 
     <!--Header-->
@@ -125,6 +126,8 @@ if (strlen($_SESSION['login']) == 0) {
                                   <p><b>Message:</b> <?php echo htmlentities($result['message']); ?> </p>
                                 </div>
                               </div>
+
+                              <!-- Status Section -->
                               <?php if ($result['Status'] == 1) { ?>
                                 <div class="vehicle_status"> <a href="#" class="btn outline btn-xs active-btn">Confirmed</a>
                                   <div class="clearfix"></div>
@@ -140,6 +143,7 @@ if (strlen($_SESSION['login']) == 0) {
                                   <div class="clearfix"></div>
                                 </div>
                               <?php } ?>
+                              <!-- Status Section -->
 
                             </li>
 
@@ -165,7 +169,7 @@ if (strlen($_SESSION['login']) == 0) {
                               </tr>
                             </table>
                             <hr />
-                        <?php }
+                          <?php }
                         } else { ?>
                           <h5 align="center" style="color:red">No booking yet</h5>
                         <?php } ?>
@@ -197,4 +201,4 @@ if (strlen($_SESSION['login']) == 0) {
   </html>
 <?php }
     }
-} ?>
+  } ?>

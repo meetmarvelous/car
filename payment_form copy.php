@@ -100,8 +100,7 @@ $user = mysqli_fetch_assoc($result);
 
 <body>
   <!-- Start Switcher -->
-  <?php // include('includes/colorswitcher.php'); 
-  ?>
+  <?php // include('includes/colorswitcher.php'); ?>
   <!-- /Switcher -->
 
   <!--Header-->
@@ -146,8 +145,7 @@ $user = mysqli_fetch_assoc($result);
                   <p>Total Amount: ₦<?= $totalAmount ?></p>
                 </div>
                 <div class="col-md-6">
-                  <form id="paymentForm" action="init_payment.php" method="POST">
-                    <!-- Hidden fields for payment details -->
+                  <form action="init_payment.php" method="POST">
                     <input type="hidden" name="amount" value="<?= $totalAmountKobo ?>">
                     <input type="hidden" name="vehicle_id" value="<?= $vhid ?>">
                     <input type="hidden" name="fromdate" value="<?= $fromDate ?>">
@@ -161,7 +159,7 @@ $user = mysqli_fetch_assoc($result);
                     </div>
                     <div class="form-group">
                       <label class="control-label">Email Address</label>
-                      <input class="form-control white_bg" value="<?= htmlentities($user['EmailId']) ?>" name="email" id="email" type="email" required readonly>
+                      <input class="form-control white_bg" value="<?= htmlentities($user['EmailId']) ?>" name="emailid" id="email" type="email" required readonly>
                     </div>
                     <div class="form-group">
                       <label class="control-label">Phone Number</label>
@@ -216,36 +214,6 @@ $user = mysqli_fetch_assoc($result);
   <!--Slider-JS-->
   <script src="assets/js/slick.min.js"></script>
   <script src="assets/js/owl.carousel.min.js"></script>
-
-  <script>
-    $(document).ready(function() {
-      // Intercept form submission
-      $('#paymentForm').on('submit', function(e) {
-        e.preventDefault(); // Prevent default form submission
-
-        // Get form data
-        var formData = $(this).serialize();
-
-        // Send AJAX request to update profile
-        $.ajax({
-          url: 'update_profile.php', // PHP script to handle profile update
-          type: 'POST',
-          data: formData,
-          success: function(response) {
-            // If profile update is successful, submit the form to init_payment.php
-            if (response === 'success') {
-              $('#paymentForm').unbind('submit').submit(); // Submit the form to init_payment.php
-            } else {
-              alert('An error occurred while updating your profile. Please try again.');
-            }
-          },
-          error: function(xhr, status, error) {
-            alert('An error occurred while updating your profile. Please try again.');
-          }
-        });
-      });
-    });
-  </script>
 </body>
 
 </html>

@@ -99,15 +99,56 @@ I want to convert the whole project code. Dont do anything yet. I will tell you 
 
 this is the file structure and I will give you the code one after the other.
 
+______________________________________________
 
-on this page, ensure the 
-From Date:
-comes before 
-To Date:
+I will provide you with two versions of a PHP file: an initial version and an updated version. The initial version contains a well-structured HTML layout for displaying user bookings and invoices, but the updated version introduces new functionality while disrupting the original structure. Specifically, the booking and invoice sections in the updated version are not properly arranged, and some content and rearrangement from the initial version is missing.
 
-if not , send an alert to explain what to do and also ensure
+Your task is to analyze both versions, identify the missing or misplaced elements, and combine them into a single improved version. The improved version should:
 
-Car already booked for these days alert should refresh on same page, not car-listing.php
+Maintain the updated functionality (e.g., payment status, transaction ID, etc.) from the updated version.
 
-        echo "<script>alert('Car already booked for these days');</script>";
-        echo "<script type='text/javascript'> document.location = ; </script>";
+Restore the proper HTML structure from the initial version, ensuring the invoice and other element are arranged like the initial code.
+
+THe booking col-md col-sm now being on the right side like before instead of moves to the next line
+
+Space to paste the initial version:
+
+
+
+Space to paste the updated version:
+
+
+
+Once you have both versions, provide the improved version that meets the criteria above.
+
+______________________________________________
+
+make payment_form.php to have all the html features of my_profile.php so it can upload all the details to database before proceeding for payment. The details are important before payment.
+use all my_profile css file , js file and all linked files in profile.php
+
+Element that should remain the same :
+PHP and sql script  to process payment.
+"Save Changes" Button now be "Process to Payment" button
+The title and coustom-breadcrumb should remain my payment page
+
+codes
+
+profile.php :
+
+
+payment_form.php :
+
+
+Now give the completed updated payment_form.php
+
+show the booking day to calculate total amount and the multiplication
+
+
+add the following to the form as it is in profile.php
+Full Name
+Email Address
+Phone Number
+Date of Birth (dd/mm/yyyy)
+Your Address
+Country
+City
