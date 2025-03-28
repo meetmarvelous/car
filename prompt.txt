@@ -1,3 +1,63 @@
+admin/bookig-details.php
+admin/canceled-bookings.php
+admin/change-password.php
+admin/changeimage1.php
+admin/changeimage2.php
+admin/changeimage3.php
+admin/changeimage4.php
+admin/changeimage5.php
+admin/confirmed-bookings.php
+admin/create-brand.php
+admin/css/
+admin/edit-brand.php
+admin/edit-vehicle.php
+admin/index.php
+admin/logout.php
+admin/manage-bookings.php
+admin/manage-brands.php
+admin/manage-conactusquery.php
+admin/manage-pages.php
+admin/manage-subscribers.php
+admin/manage-vehicles.php
+admin/new-bookings.php
+admin/post-avehical.php
+admin/reg-users.php
+admin/testimonials.php
+admin/update-contactinfo.php
+assets/css/marvel.css
+assets/css/style.css
+assets/images/
+assets/js/
+includes/config.php
+includes/header.php
+includes/footer.php
+includes/forgotpassword.php
+includes/login.php
+includes/registration.php
+includes/sidebar.php
+includes/db.php
+car-listing.php
+check_availability.php
+contact-us.php
+index.php
+logout.php
+my-booking.php
+my-testimonials.php
+page.php
+post-testimonial.php
+profile.php
+search-carresult.php
+search.php
+update-password.php
+vehical-details.php
+
+vehical-details.php
+payment_form.php
+init_payment.php
+payment_confirmation.php
+my-booking.php 
+repay_process.php
+
 I want to convert the whole project code to PHP MySQLi Procedural.
 
 
@@ -123,32 +183,29 @@ Once you have both versions, provide the improved version that meets the criteri
 
 ______________________________________________
 
-make payment_form.php to have all the html features of my_profile.php so it can upload all the details to database before proceeding for payment. The details are important before payment.
-use all my_profile css file , js file and all linked files in profile.php
-
-Element that should remain the same :
-PHP and sql script  to process payment.
-"Save Changes" Button now be "Process to Payment" button
-The title and coustom-breadcrumb should remain my payment page
-
-codes
-
-profile.php :
-
+Edit the payment_form.php such that whenever the checkout.paystack.com pop-up is cancelled even without attempting to pay, it returns to my-booking.php instead of payment_form.php.
 
 payment_form.php :
 
 
-Now give the completed updated payment_form.php
-
-show the booking day to calculate total amount and the multiplication
+my-booking.php :
 
 
-add the following to the form as it is in profile.php
-Full Name
-Email Address
-Phone Number
-Date of Birth (dd/mm/yyyy)
-Your Address
-Country
-City
+init_payment.php :
+
+
+
+  // Check for overlapping bookings in payment_form.php , checking the user detail too
+
+  example for the ones without user details, so ensure you check for the user details if its the current user
+  $ret = "SELECT * FROM tblbooking WHERE 
+            ('$fromdate' BETWEEN date(FromDate) AND date(ToDate) OR 
+             '$todate' BETWEEN date(FromDate) AND date(ToDate) OR 
+             date(FromDate) BETWEEN '$fromdate' AND '$todate') AND 
+            VehicleId = '$vhid'";
+  $result1 = mysqli_query($con, $ret);
+
+if car is booked by the same user - head to my-booking.php to make payment.
+
+if class is booked by other = echo "<script>alert('Car already booked for these days.');</script>";
+    // Move to car-listing.php page page to pay for confirm

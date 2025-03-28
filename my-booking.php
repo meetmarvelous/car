@@ -99,7 +99,7 @@ if (strlen($_SESSION['login']) == 0) {
             </div>
             <div class="row">
               <div class="col-md-3 col-sm-3">
-                <?php include('includes/sidebar.php'); ?>
+                <?php include('includes/sidebar2.php'); ?>
 
                 <div class="col-md-8 col-sm-8">
                   <div class="profile_wrap">
@@ -108,12 +108,8 @@ if (strlen($_SESSION['login']) == 0) {
                       <ul class="vehicle_listing">
                         <?php
                         // Query to fetch booking details
-                        $sql = "SELECT tblvehicles.Vimage1 AS Vimage1, tblvehicles.VehiclesTitle, tblvehicles.id AS vid, tblbrands.BrandName, tblbooking.FromDate, tblbooking.ToDate, tblbooking.message, tblbooking.Status, tblvehicles.PricePerDay, DATEDIFF(tblbooking.ToDate, tblbooking.FromDate) AS totaldays, tblbooking.BookingNumber, tblbooking.transaction_id, tblbooking.payment_status 
-                              FROM tblbooking 
-                              JOIN tblvehicles ON tblbooking.VehicleId = tblvehicles.id 
-                              JOIN tblbrands ON tblbrands.id = tblvehicles.VehiclesBrand 
-                              WHERE tblbooking.userEmail = '$useremail' 
-                              ORDER BY tblbooking.id DESC";
+
+                        $sql = "SELECT tblvehicles.Vimage1 AS Vimage1, tblvehicles.VehiclesTitle, tblvehicles.id AS vid, tblbrands.BrandName, tblbooking.FromDate, tblbooking.ToDate, tblbooking.message, tblbooking.Status, tblvehicles.PricePerDay, DATEDIFF(tblbooking.ToDate, tblbooking.FromDate) AS totaldays, tblbooking.BookingNumber, tblbooking.transaction_id, tblbooking.payment_status, tblbooking.pickup FROM tblbooking JOIN tblvehicles ON tblbooking.VehicleId = tblvehicles.id JOIN tblbrands ON tblbrands.id = tblvehicles.VehiclesBrand WHERE tblbooking.userEmail = '$useremail' ORDER BY tblbooking.id DESC";
                         $query = mysqli_query($con, $sql);
 
                         if (mysqli_num_rows($query) > 0) {
@@ -147,19 +143,21 @@ if (strlen($_SESSION['login']) == 0) {
                                   <p><b>Message:</b> <?php echo htmlentities($result['message']); ?> </p>
                                   <p><b>Transaction ID:</b> <?php echo htmlentities($result['transaction_id']); ?></p>
                                   <p><b>Payment Status:</b> <?php echo htmlentities($paymentStatus); ?></p>
+                                  <p><b>Pickup Location:</b> <?php echo htmlentities($result['pickup']); ?></p>
                                 </div>
                               </div>
 
                               <!-- Status Section -->
+
                               <div class="vehicle_status">
-                              <?php if ($paymentStatus === 'Confirmed') { ?>
-                                <a href="#" class="btn outline btn-xs active-btn">Confirmed</a>
-                                <div class="clearfix"></div>
-                              <?php } else { ?>
-                                <a href="#" class="btn outline btn-xs">Not Confirmed Yet</a>
-                                <div class="clearfix"></div>
-                              <?php } ?>
-                            </div>
+                                <?php if ($paymentStatus === 'Confirmed') { ?>
+                                  <a href="#" class="btn outline btn-xs active-btn">Confirmed</a>
+                                  <div class="clearfix"></div>
+                                <?php } else { ?>
+                                  <a href="repay_process.php?bookingno=<?php echo htmlentities($result['BookingNumber']); ?>" class="btn outline btn-xs">Pay To Confirm</a>
+                                  <div class="clearfix"></div>
+                                <?php } ?>
+                              </div>
 
                               <!-- Status Section -->
 
@@ -176,7 +174,8 @@ if (strlen($_SESSION['login']) == 0) {
                               </tr>
                               <tr>
                                 <td><?php echo htmlentities($result['VehiclesTitle']); ?>,
-                                  <?php echo htmlentities($result['BrandName']); ?></td>
+                                  <?php echo htmlentities($result['BrandName']); ?>
+                                </td>
                                 <td><?php echo htmlentities($result['FromDate']); ?></td>
                                 <td> <?php echo htmlentities($result['ToDate']); ?></td>
                                 <td><?php echo htmlentities($tds = $result['totaldays']); ?></td>

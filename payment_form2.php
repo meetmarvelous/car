@@ -36,6 +36,12 @@ $totalAmount = $days * $vehicle['PricePerDay'];
 
 // Ensure the total amount is an integer (Paystack requires amount in kobo)
 $totalAmountKobo = intval($totalAmount); // Convert to kobo
+
+// Fetch user details
+$useremail = $_SESSION['login'];
+$sql = "SELECT * FROM tblusers WHERE EmailId = '$useremail'";
+$result = mysqli_query($con, $sql);
+$user = mysqli_fetch_assoc($result);
 ?>
 
 <!DOCTYPE HTML>
@@ -43,21 +49,66 @@ $totalAmountKobo = intval($totalAmount); // Convert to kobo
 
 <head>
   <title>Titiabiks Ventures | Payment Form</title>
-  <!-- Bootstrap -->
+  <!--Bootstrap -->
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
-  <!-- Custom Style -->
+  <!--Custome Style -->
   <link rel="stylesheet" href="assets/css/style.css" type="text/css">
-  <!-- FontAwesome -->
+  <!--OWL Carousel slider-->
+  <link rel="stylesheet" href="assets/css/owl.carousel.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/owl.transitions.css" type="text/css">
+  <!--slick-slider -->
+  <link href="assets/css/slick.css" rel="stylesheet">
+  <!--bootstrap-slider -->
+  <link href="assets/css/bootstrap-slider.min.css" rel="stylesheet">
+  <!--FontAwesome Font Style -->
   <link href="assets/css/font-awesome.min.css" rel="stylesheet">
-  <!-- Google Fonts -->
+
+  <!-- SWITCHER -->
+  <link rel="stylesheet" id="switcher-css" type="text/css" href="assets/switcher/css/switcher.css" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/red.css" title="red" media="all" data-default-color="true" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/orange.css" title="orange" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/blue.css" title="blue" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/pink.css" title="pink" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/green.css" title="green" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/purple.css" title="purple" media="all" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/images/favicon-icon/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/images/favicon-icon/apple-touch-icon-114-precomposed.html">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/images/favicon-icon/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="assets/images/favicon-icon/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="assets/images/favicon-icon/favicon.png">
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+  <style>
+    .errorWrap {
+      padding: 10px;
+      margin: 0 0 20px 0;
+      background: #fff;
+      border-left: 4px solid #dd3d36;
+      -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+      box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+    }
+
+    .succWrap {
+      padding: 10px;
+      margin: 0 0 20px 0;
+      background: #fff;
+      border-left: 4px solid #5cb85c;
+      -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+      box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Header -->
-  <?php include('includes/header.php'); ?>
+  <!-- Start Switcher -->
+  <?php // include('includes/colorswitcher.php'); 
+  ?>
+  <!-- /Switcher -->
 
-  <!-- Page Header -->
+  <!--Header-->
+  <?php include('includes/header.php'); ?>
+  <!-- /Header -->
+
+  <!--Page Header-->
   <section class="page-header profile_page">
     <div class="container">
       <div class="page-header_wrap">
@@ -70,10 +121,10 @@ $totalAmountKobo = intval($totalAmount); // Convert to kobo
         </ul>
       </div>
     </div>
-    <!-- Dark Overlay -->
+    <!-- Dark Overlay-->
     <div class="dark-overlay"></div>
   </section>
-  <!-- /Page Header -->
+  <!-- /Page Header-->
 
   <!-- Payment Form Section -->
   <section class="user_profile inner_pages">
@@ -91,18 +142,49 @@ $totalAmountKobo = intval($totalAmount); // Convert to kobo
                 <div class="col-md-6">
                   <h4><?= htmlentities($vehicle['VehiclesTitle']) ?></h4>
                   <p>Price Per Day: ₦<?= htmlentities($vehicle['PricePerDay']) ?></p>
+                  <p>Booking Days: <?= $days ?> days</p>
                   <p>Total Amount: ₦<?= $totalAmount ?></p>
                 </div>
                 <div class="col-md-6">
-                  <form action="init_payment.php" method="POST">
+                  <form id="paymentForm" action="my-booking.php" method="POST">
+                    <!-- Hidden fields for payment details -->
                     <input type="hidden" name="amount" value="<?= $totalAmountKobo ?>">
                     <input type="hidden" name="vehicle_id" value="<?= $vhid ?>">
                     <input type="hidden" name="fromdate" value="<?= $fromDate ?>">
                     <input type="hidden" name="todate" value="<?= $toDate ?>">
                     <input type="hidden" name="message" value="<?= $_SESSION['message'] ?>">
-                    <div class="mb-3">
-                      <input type="email" name="email" class="form-control" required placeholder="Email" value="<?= $_SESSION['login'] ?>">
+
+                    <!-- User Details Form -->
+                    <div class="form-group">
+                      <label class="control-label">Full Name</label>
+                      <input class="form-control white_bg" name="fullname" value="<?= htmlentities($user['FullName']) ?>" id="fullname" type="text" required>
                     </div>
+                    <div class="form-group">
+                      <label class="control-label">Email Address</label>
+                      <input class="form-control white_bg" value="<?= htmlentities($user['EmailId']) ?>" name="email" id="email" type="email" required readonly>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Phone Number</label>
+                      <input class="form-control white_bg" name="mobilenumber" value="<?= htmlentities($user['ContactNo']) ?>" id="phone-number" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Date of Birth (dd/mm/yyyy)</label>
+                      <input class="form-control white_bg" value="<?= htmlentities($user['dob']) ?>" name="dob" placeholder="dd/mm/yyyy" id="birth-date" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Your Address</label>
+                      <textarea class="form-control white_bg" name="address" rows="4"><?= htmlentities($user['Address']) ?></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Country</label>
+                      <input class="form-control white_bg" id="country" name="country" value="<?= htmlentities($user['Country']) ?>" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">PickUp Location (Well detailed)</label>
+                      <textarea class="form-control white_bg" name="pickup" rows="4"></textarea>
+                    </div>
+                    <!-- End User Details Form -->
+
                     <button type="submit" class="btn btn-success">Proceed to Payment</button>
                   </form>
                 </div>
@@ -115,13 +197,55 @@ $totalAmountKobo = intval($totalAmount); // Convert to kobo
   </section>
   <!-- /Payment Form Section -->
 
-  <!-- Footer -->
+  <!--Footer -->
   <?php include('includes/footer.php'); ?>
+  <!-- /Footer-->
+
+  <!--Back to top-->
+  <div id="back-top" class="back-top"> <a href="#top"><i class="fa fa-angle-up" aria-hidden="true"></i> </a> </div>
+  <!--/Back to top-->
 
   <!-- Scripts -->
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
   <script src="assets/js/interface.js"></script>
+  <!--Switcher-->
+  <script src="assets/switcher/js/switcher.js"></script>
+  <!--bootstrap-slider-JS-->
+  <script src="assets/js/bootstrap-slider.min.js"></script>
+  <!--Slider-JS-->
+  <script src="assets/js/slick.min.js"></script>
+  <script src="assets/js/owl.carousel.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      // Intercept form submission
+      $('#paymentForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        var formData = $(this).serialize();
+
+        // Send AJAX request to update profile
+        $.ajax({
+          url: 'update_profile.php', // PHP script to handle profile update
+          type: 'POST',
+          data: formData,
+          success: function(response) {
+            // If profile update is successful, submit the form to init_payment.php
+            if (response === 'success') {
+              $('#paymentForm').unbind('submit').submit(); // Submit the form to init_payment.php
+            } else {
+              alert('An error occurred while updating your profile. Please try again.');
+            }
+          },
+          error: function(xhr, status, error) {
+            alert('An error occurred while updating your profile. Please try again.');
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

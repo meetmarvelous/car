@@ -130,11 +130,11 @@ $user = mysqli_fetch_assoc($result);
   <section class="user_profile inner_pages">
     <div class="container">
       <div class="row">
-        <div class="col-md-3 col-sm-3">
+        <div class="col-md-2 col-sm-2">
           <!-- Sidebar -->
-          <?php include('includes/sidebar.php'); ?>
+          <?php // include('includes/sidebar.php'); ?>
         </div>
-        <div class="col-md-9 col-sm-9">
+        <div class="col-md-8 col-sm-8">
           <div class="profile_wrap">
             <h5 class="uppercase underline">Complete Your Payment</h5>
             <div class="my_vehicles_list">
@@ -181,7 +181,7 @@ $user = mysqli_fetch_assoc($result);
                     </div>
                     <div class="form-group">
                       <label class="control-label">PickUp Location (Well detailed)</label>
-                      <textarea class="form-control white_bg" name="city" rows="4"></textarea>
+                      <textarea class="form-control white_bg" name="pickup" rows="4"></textarea>
                     </div>
                     <!-- End User Details Form -->
 
@@ -192,6 +192,7 @@ $user = mysqli_fetch_assoc($result);
             </div>
           </div>
         </div>
+        <div class="col-md-2 col-sm-2">
       </div>
     </div>
   </section>

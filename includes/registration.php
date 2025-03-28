@@ -12,7 +12,7 @@ if (isset($_POST['signup'])) {
     $_SESSION['login'] = $email; // Store email in session
     $_SESSION['fname'] = $fname; // Store full name in session
     // Redirect to the current page or homepage after successful registration
-    echo "<script>alert('Registration successful. Now you can login');</script>";
+    echo "<script>alert('Registration successful.');</script>";
     $currentpage = $_SERVER['REQUEST_URI'];
     echo "<script type='text/javascript'> document.location = '$currentpage'; </script>";
   } else {

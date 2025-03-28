@@ -1,0 +1,1071 @@
+How it works currently from payment_form.php : whenever the paystack pop-up is cancelled on payment_form.php and it returns to payment_form.php, where you have to click "proceed to payment" button again via init_payment.php
+
+Goals : 
+1. The goal is to prevent the creation of multiple booking with same booking No into database. Check if the current session booking has been submitted already, if yes, then update the status instead of creating a new one with same booking no in init_payment.php
+
+Is there a better way to handle that or should we proceed with my idea? 
+
+Here are the necessary codes : 
+
+vehical-details.php :
+<?php
+session_start();
+include('includes/config.php');
+error_reporting(0);
+
+if (isset($_POST['submit'])) {
+
+  // Add this check at the beginning of your validation
+  if (!isset($_POST['terms'])) {
+    echo "<script>alert('You must accept the terms and conditions to proceed.');</script>";
+    echo "<script>window.location.href = window.location.href;</script>";
+    exit();
+  }
+
+  $fromdate = $_POST['fromdate'];
+  $todate = $_POST['todate'];
+  $message = $_POST['message'];
+  $useremail = $_SESSION['login'];
+  $status = 0; // Payment pending
+  $vhid = $_GET['vhid'];
+  $bookingno = mt_rand(100000000, 999999999);
+
+  // Validate From Date and To Date
+  if (strtotime($fromdate) >= strtotime($todate)) {
+    echo "<script>alert('Please ensure the start date comes before the end date.');</script>";
+    echo "<script>window.location.href = window.location.href;</script>"; // Refresh the page
+    exit();
+  }
+
+  // Check for overlapping bookings
+  $ret = "SELECT * FROM tblbooking WHERE 
+            ('$fromdate' BETWEEN date(FromDate) AND date(ToDate) OR 
+             '$todate' BETWEEN date(FromDate) AND date(ToDate) OR 
+             date(FromDate) BETWEEN '$fromdate' AND '$todate') AND 
+            VehicleId = '$vhid'";
+  $result1 = mysqli_query($con, $ret);
+
+  if (mysqli_num_rows($result1) == 0) {
+    // Store booking details in session
+    $_SESSION['bookingno'] = $bookingno;
+    $_SESSION['useremail'] = $useremail;
+    $_SESSION['vhid'] = $vhid;
+    $_SESSION['fromdate'] = $fromdate;
+    $_SESSION['todate'] = $todate;
+    $_SESSION['message'] = $message;
+    $_SESSION['status'] = $status;
+
+    // Redirect to payment form
+    header("Location: payment_form.php");
+    exit();
+  } else {
+    echo "<script>alert('Car already booked for these days.');</script>";
+    echo "<script>window.location.href = window.location.href;</script>"; // Refresh the page
+  }
+}
+?>
+
+
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Titiabiks Ventures | Vehicle Details</title>
+  <!--Bootstrap -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
+  <!--Custome Style -->
+  <link rel="stylesheet" href="assets/css/style.css" type="text/css">
+  <!--OWL Carousel slider-->
+  <link rel="stylesheet" href="assets/css/owl.carousel.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/owl.transitions.css" type="text/css">
+  <!--slick-slider -->
+  <link href="assets/css/slick.css" rel="stylesheet">
+  <!--bootstrap-slider -->
+  <link href="assets/css/bootstrap-slider.min.css" rel="stylesheet">
+  <!--FontAwesome Font Style -->
+  <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- SWITCHER -->
+  <link rel="stylesheet" id="switcher-css" type="text/css" href="assets/switcher/css/switcher.css" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/red.css" title="red" media="all" data-default-color="true" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/orange.css" title="orange" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/blue.css" title="blue" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/pink.css" title="pink" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/green.css" title="green" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/purple.css" title="purple" media="all" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/images/favicon-icon/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/images/favicon-icon/apple-touch-icon-114-precomposed.html">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/images/favicon-icon/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="assets/images/favicon-icon/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="assets/images/favicon-icon/favicon.png">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+  <style>
+    .checkbox label, .checkbox input[type="checkbox"] {
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+  </style>
+</head>
+
+<body>
+  <!-- Start Switcher -->
+  <?php // include('includes/colorswitcher.php'); 
+  ?>
+  <!-- /Switcher -->
+
+  <!-- Header -->
+  <?php include('includes/header.php'); ?>
+
+  <!-- Listing-Image-Slider -->
+  <?php
+  $vhid = intval($_GET['vhid']);
+  $sql = "SELECT tblvehicles.*, tblbrands.BrandName, tblbrands.id AS bid FROM tblvehicles 
+            JOIN tblbrands ON tblbrands.id = tblvehicles.VehiclesBrand 
+            WHERE tblvehicles.id = '$vhid'";
+  $result = mysqli_query($con, $sql);
+  $cnt = 1;
+  if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+      $_SESSION['brndid'] = $row['bid'];
+  ?>
+      <section id="listing_img_slider">
+        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage1']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage2']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage3']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage4']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <?php if ($row['Vimage5'] != "") { ?>
+          <div><img src="admin/img/vehicleimages/<?= htmlentities($row['Vimage5']) ?>" class="img-responsive" alt="image" width="900" height="560"></div>
+        <?php } ?>
+      </section>
+      <!-- /Listing-Image-Slider -->
+
+      <!-- Listing-detail -->
+      <section class="listing-detail">
+        <div class="container">
+          <div class="listing_detail_head row">
+            <div class="col-md-9">
+              <h2><?= htmlentities($row['BrandName']) ?>, <?= htmlentities($row['VehiclesTitle']) ?></h2>
+            </div>
+            <div class="col-md-3">
+              <div class="price_info">
+                <p>₦<?= htmlentities($row['PricePerDay']) ?></p>Per Day
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-9">
+              <div class="main_features">
+                <ul>
+                  <li> <i class="fa fa-calendar" aria-hidden="true"></i>
+                    <h5><?= htmlentities($row['ModelYear']) ?></h5>
+                    <p>Reg.Year</p>
+                  </li>
+                  <li> <i class="fa fa-cogs" aria-hidden="true"></i>
+                    <h5><?= htmlentities($row['FuelType']) ?></h5>
+                    <p>Fuel Type</p>
+                  </li>
+                  <li> <i class="fa fa-user-plus" aria-hidden="true"></i>
+                    <h5><?= htmlentities($row['SeatingCapacity']) ?></h5>
+                    <p>Seats</p>
+                  </li>
+                </ul>
+              </div>
+              <div class="listing_more_info">
+                <div class="listing_detail_wrap">
+                  <!-- Nav tabs -->
+                  <ul class="nav nav-tabs gray-bg" role="tablist">
+                    <li role="presentation" class="active"><a href="#vehicle-overview" aria-controls="vehicle-overview" role="tab" data-toggle="tab">Vehicle Overview</a></li>
+                    <li role="presentation"><a href="#accessories" aria-controls="accessories" role="tab" data-toggle="tab">Accessories</a></li>
+                  </ul>
+
+                  <!-- Tab panes -->
+                  <div class="tab-content">
+                    <!-- Vehicle Overview -->
+                    <div role="tabpanel" class="tab-pane active" id="vehicle-overview">
+                      <p><?= htmlentities($row['VehiclesOverview']) ?></p>
+                    </div>
+
+                    <!-- Accessories -->
+                    <div role="tabpanel" class="tab-pane" id="accessories">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th colspan="2">Accessories</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Air Conditioner</td>
+                            <td><?= $row['AirConditioner'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>AntiLock Braking System</td>
+                            <td><?= $row['AntiLockBrakingSystem'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Power Steering</td>
+                            <td><?= $row['PowerSteering'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Power Windows</td>
+                            <td><?= $row['PowerWindows'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>CD Player</td>
+                            <td><?= $row['CDPlayer'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Leather Seats</td>
+                            <td><?= $row['LeatherSeats'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Central Locking</td>
+                            <td><?= $row['CentralLocking'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Power Door Locks</td>
+                            <td><?= $row['PowerDoorLocks'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Brake Assist</td>
+                            <td><?= $row['BrakeAssist'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Driver Airbag</td>
+                            <td><?= $row['DriverAirbag'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Passenger Airbag</td>
+                            <td><?= $row['PassengerAirbag'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                          <tr>
+                            <td>Crash Sensor</td>
+                            <td><?= $row['CrashSensor'] ? '<i class="fa fa-check" aria-hidden="true"></i>' : '<i class="fa fa-close" aria-hidden="true"></i>' ?></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <?php
+      }
+    }
+        ?>
+        <!-- Side-Bar -->
+        <aside class="col-md-3">
+          <div class="share_vehicle">
+            <p>Share:
+              <a href="#"><i class="fa fa-facebook-square" aria-hidden="true"></i></a>
+              <a href="#"><i class="fa fa-twitter-square" aria-hidden="true"></i></a>
+              <a href="#"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a>
+              <a href="#"><i class="fa fa-google-plus-square" aria-hidden="true"></i></a>
+            </p>
+          </div>
+          <div class="sidebar_widget">
+            <div class="widget_heading">
+              <h5><i class="fa fa-envelope" aria-hidden="true"></i>Book Now</h5>
+            </div>
+            <form method="post">
+
+              <?php if ($_SESSION['login']) { ?>
+                <div class="form-group">
+                  <label>From Date:</label>
+                  <input type="date" class="form-control" name="fromdate" required>
+                </div>
+                <div class="form-group">
+                  <label>To Date:</label>
+                  <input type="date" class="form-control" name="todate" required>
+                </div>
+                <div class="form-group">
+                  <textarea rows="4" class="form-control" name="message" placeholder="Message" required></textarea>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <input type="checkbox" id="termsCheckbox" name="terms" required>
+                    <label for="termsCheckbox">
+                      I accept the <a href="terms.php" target="_blank">terms and conditions</a>
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn" name="submit" value="Book Now">
+                </div>
+              <?php } else { ?>
+                <a href="#loginform" class="btn btn-xs uppercase" data-toggle="modal" data-dismiss="modal">Login For Book</a>
+              <?php } ?>
+            </form>
+          </div>
+        </aside>
+        <!-- /Side-Bar -->
+          </div>
+
+          <div class="space-20"></div>
+          <div class="divider"></div>
+
+          <!--Similar-Cars-->
+          <div class="similar_cars">
+            <h3>Similar Cars</h3>
+            <div class="row">
+              <?php
+              $bid = $_SESSION['brndid'];
+              $sql = "SELECT tblvehicles.VehiclesTitle, tblbrands.BrandName, tblvehicles.PricePerDay, tblvehicles.FuelType, tblvehicles.ModelYear, tblvehicles.id, tblvehicles.SeatingCapacity, tblvehicles.VehiclesOverview, tblvehicles.Vimage1 FROM tblvehicles JOIN tblbrands ON tblbrands.id = tblvehicles.VehiclesBrand WHERE tblvehicles.VehiclesBrand = '$bid'";
+              $result = mysqli_query($con, $sql);
+              if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+                  <div class="col-md-3 grid_listing">
+                    <div class="product-listing-m gray-bg">
+                      <div class="product-listing-img"> <a href="vehical-details.php?vhid=<?php echo htmlentities($row['id']); ?>"><img src="admin/img/vehicleimages/<?php echo htmlentities($row['Vimage1']); ?>" class="img-responsive" alt="image" /> </a>
+                      </div>
+                      <div class="product-listing-content">
+                        <h5><a href="vehical-details.php?vhid=<?php echo htmlentities($row['id']); ?>"><?php echo htmlentities($row['BrandName']); ?>, <?php echo htmlentities($row['VehiclesTitle']); ?></a></h5>
+                        <p class="list-price">₦<?php echo htmlentities($row['PricePerDay']); ?></p>
+                        <ul class="features_list">
+                          <li><i class="fa fa-user" aria-hidden="true"></i><?php echo htmlentities($row['SeatingCapacity']); ?> seats</li>
+                          <li><i class="fa fa-calendar" aria-hidden="true"></i><?php echo htmlentities($row['ModelYear']); ?> model</li>
+                          <li><i class="fa fa-car" aria-hidden="true"></i><?php echo htmlentities($row['FuelType']); ?></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+              <?php }
+              } ?>
+            </div>
+          </div>
+          <!--/Similar-Cars-->
+        </div>
+      </section>
+      <!--/Listing-detail-->
+
+      <!--Footer -->
+      <?php include('includes/footer.php'); ?>
+      <!-- /Footer-->
+
+      <!--Back to top-->
+      <div id="back-top" class="back-top"> <a href="#top"><i class="fa fa-angle-up" aria-hidden="true"></i> </a> </div>
+      <!--/Back to top-->
+
+      <!--Login-Form -->
+      <?php include('includes/login.php'); ?>
+      <!--/Login-Form -->
+
+      <!--Register-Form -->
+      <?php include('includes/registration.php'); ?>
+      <!--/Register-Form -->
+
+      <!--Forgot-password-Form -->
+      <?php include('includes/forgotpassword.php'); ?>
+      <script src="assets/js/jquery.min.js"></script>
+      <script src="assets/js/bootstrap.min.js"></script>
+      <script src="assets/js/interface.js"></script>
+      <script src="assets/switcher/js/switcher.js"></script>
+      <script src="assets/js/bootstrap-slider.min.js"></script>
+      <script src="assets/js/slick.min.js"></script>
+      <script src="assets/js/owl.carousel.min.js"></script>
+</body>
+
+</html>
+
+payment_form.php :
+<?php
+session_start();
+include('includes/config.php');
+
+// Check if the user is logged in
+if (!isset($_SESSION['login'])) {
+  header("Location: login.php");
+  exit();
+}
+
+// Check if booking details are set in the session
+if (!isset($_SESSION['fromdate']) || !isset($_SESSION['todate']) || !isset($_SESSION['vhid'])) {
+  echo "<script>alert('Invalid booking details. Please try again.');</script>";
+  echo "<script>window.location.href = 'car-listing.php';</script>";
+  exit();
+}
+
+// Get vehicle details
+$vhid = $_SESSION['vhid'];
+$sql = "SELECT * FROM tblvehicles WHERE id='$vhid'";
+$result = mysqli_query($con, $sql);
+$vehicle = mysqli_fetch_assoc($result);
+
+if (!$vehicle) {
+  echo "<script>alert('Vehicle not found.');</script>";
+  echo "<script>window.location.href = 'car-listing.php';</script>";
+  exit();
+}
+
+// Calculate total amount
+$fromDate = $_SESSION['fromdate'];
+$toDate = $_SESSION['todate'];
+$days = (strtotime($toDate) - strtotime($fromDate)) / (60 * 60 * 24);
+$days = intval($days); // Ensure days is a whole number
+$totalAmount = $days * $vehicle['PricePerDay'];
+
+// Ensure the total amount is an integer (Paystack requires amount in kobo)
+$totalAmountKobo = intval($totalAmount); // Convert to kobo
+
+// Fetch user details
+$useremail = $_SESSION['login'];
+$sql = "SELECT * FROM tblusers WHERE EmailId = '$useremail'";
+$result = mysqli_query($con, $sql);
+$user = mysqli_fetch_assoc($result);
+?>
+
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Titiabiks Ventures | Payment Form</title>
+  <!--Bootstrap -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
+  <!--Custome Style -->
+  <link rel="stylesheet" href="assets/css/style.css" type="text/css">
+  <!--OWL Carousel slider-->
+  <link rel="stylesheet" href="assets/css/owl.carousel.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/owl.transitions.css" type="text/css">
+  <!--slick-slider -->
+  <link href="assets/css/slick.css" rel="stylesheet">
+  <!--bootstrap-slider -->
+  <link href="assets/css/bootstrap-slider.min.css" rel="stylesheet">
+  <!--FontAwesome Font Style -->
+  <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- SWITCHER -->
+  <link rel="stylesheet" id="switcher-css" type="text/css" href="assets/switcher/css/switcher.css" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/red.css" title="red" media="all" data-default-color="true" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/orange.css" title="orange" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/blue.css" title="blue" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/pink.css" title="pink" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/green.css" title="green" media="all" />
+  <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/purple.css" title="purple" media="all" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/images/favicon-icon/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/images/favicon-icon/apple-touch-icon-114-precomposed.html">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/images/favicon-icon/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="assets/images/favicon-icon/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="assets/images/favicon-icon/favicon.png">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+  <style>
+    .errorWrap {
+      padding: 10px;
+      margin: 0 0 20px 0;
+      background: #fff;
+      border-left: 4px solid #dd3d36;
+      -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+      box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+    }
+
+    .succWrap {
+      padding: 10px;
+      margin: 0 0 20px 0;
+      background: #fff;
+      border-left: 4px solid #5cb85c;
+      -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+      box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Start Switcher -->
+  <?php // include('includes/colorswitcher.php'); 
+  ?>
+  <!-- /Switcher -->
+
+  <!--Header-->
+  <?php include('includes/header.php'); ?>
+  <!-- /Header -->
+
+  <!--Page Header-->
+  <section class="page-header profile_page">
+    <div class="container">
+      <div class="page-header_wrap">
+        <div class="page-heading">
+          <h1>Payment Form</h1>
+        </div>
+        <ul class="coustom-breadcrumb">
+          <li><a href="#">Home</a></li>
+          <li>Payment Form</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Dark Overlay-->
+    <div class="dark-overlay"></div>
+  </section>
+  <!-- /Page Header-->
+
+  <!-- Payment Form Section -->
+  <section class="user_profile inner_pages">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-3">
+          <!-- Sidebar -->
+          <?php include('includes/sidebar.php'); ?>
+        </div>
+        <div class="col-md-9 col-sm-9">
+          <div class="profile_wrap">
+            <h5 class="uppercase underline">Complete Your Payment</h5>
+            <div class="my_vehicles_list">
+              <div class="row">
+                <div class="col-md-6">
+                  <h4><?= htmlentities($vehicle['VehiclesTitle']) ?></h4>
+                  <p>Price Per Day: ₦<?= htmlentities($vehicle['PricePerDay']) ?></p>
+                  <p>Booking Days: <?= $days ?> days</p>
+                  <p>Total Amount: ₦<?= $totalAmount ?></p>
+                </div>
+                <div class="col-md-6">
+                  <form id="paymentForm" action="init_payment.php" method="POST">
+                    <!-- Hidden fields for payment details -->
+                    <input type="hidden" name="amount" value="<?= $totalAmountKobo ?>">
+                    <input type="hidden" name="vehicle_id" value="<?= $vhid ?>">
+                    <input type="hidden" name="fromdate" value="<?= $fromDate ?>">
+                    <input type="hidden" name="todate" value="<?= $toDate ?>">
+                    <input type="hidden" name="message" value="<?= $_SESSION['message'] ?>">
+
+                    <!-- User Details Form -->
+                    <div class="form-group">
+                      <label class="control-label">Full Name</label>
+                      <input class="form-control white_bg" name="fullname" value="<?= htmlentities($user['FullName']) ?>" id="fullname" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Email Address</label>
+                      <input class="form-control white_bg" value="<?= htmlentities($user['EmailId']) ?>" name="email" id="email" type="email" required readonly>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Phone Number</label>
+                      <input class="form-control white_bg" name="mobilenumber" value="<?= htmlentities($user['ContactNo']) ?>" id="phone-number" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Date of Birth (dd/mm/yyyy)</label>
+                      <input class="form-control white_bg" value="<?= htmlentities($user['dob']) ?>" name="dob" placeholder="dd/mm/yyyy" id="birth-date" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Your Address</label>
+                      <textarea class="form-control white_bg" name="address" rows="4"><?= htmlentities($user['Address']) ?></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">Country</label>
+                      <input class="form-control white_bg" id="country" name="country" value="<?= htmlentities($user['Country']) ?>" type="text">
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label">PickUp Location (Well detailed)</label>
+                      <textarea class="form-control white_bg" name="pickup" rows="4"></textarea>
+                    </div>
+                    <!-- End User Details Form -->
+
+                    <button type="submit" class="btn btn-success">Proceed to Payment</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /Payment Form Section -->
+
+  <!--Footer -->
+  <?php include('includes/footer.php'); ?>
+  <!-- /Footer-->
+
+  <!--Back to top-->
+  <div id="back-top" class="back-top"> <a href="#top"><i class="fa fa-angle-up" aria-hidden="true"></i> </a> </div>
+  <!--/Back to top-->
+
+  <!-- Scripts -->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/interface.js"></script>
+  <!--Switcher-->
+  <script src="assets/switcher/js/switcher.js"></script>
+  <!--bootstrap-slider-JS-->
+  <script src="assets/js/bootstrap-slider.min.js"></script>
+  <!--Slider-JS-->
+  <script src="assets/js/slick.min.js"></script>
+  <script src="assets/js/owl.carousel.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      // Intercept form submission
+      $('#paymentForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        var formData = $(this).serialize();
+
+        // Send AJAX request to update profile
+        $.ajax({
+          url: 'update_profile.php', // PHP script to handle profile update
+          type: 'POST',
+          data: formData,
+          success: function(response) {
+            // If profile update is successful, submit the form to init_payment.php
+            if (response === 'success') {
+              $('#paymentForm').unbind('submit').submit(); // Submit the form to init_payment.php
+            } else {
+              alert('An error occurred while updating your profile. Please try again.');
+            }
+          },
+          error: function(xhr, status, error) {
+            alert('An error occurred while updating your profile. Please try again.');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
+
+init_payment.php :
+<?php
+session_start();
+include 'includes/config.php';
+require 'vendor/autoload.php'; // Include Paystack library
+
+// Check if the user is logged in
+if (!isset($_SESSION['login'])) {
+    die("You must be logged in to make a payment. <a href='login.php'>Login here</a>.");
+}
+
+$userEmail = $_SESSION['login']; // Get the user email from the session
+
+// Get form data
+$email = $_POST['email'];
+$amountInNaira = $_POST['amount']; // Amount in naira
+$amountInKobo = $amountInNaira * 100; // Convert to kobo
+$fromDate = $_POST['fromdate'];
+$toDate = $_POST['todate'];
+$message = $_POST['message'];
+$pickup = $_POST['pickup']; // Get pickup location
+$vehicleId = $_POST['vehicle_id'];
+
+// Generate a unique Booking No #
+$bookingNo = $_SESSION['bookingno'];
+
+// Save booking details to tblbooking (status is pending)
+$sql = "INSERT INTO tblbooking (BookingNumber, userEmail, VehicleId, FromDate, ToDate, message, pickup, Status, payment_status)
+        VALUES ('$bookingNo', '$userEmail', '$vehicleId', '$fromDate', '$toDate', '$message', '$pickup', 0, 'pending')";
+if (mysqli_query($con, $sql)) {
+    $bookingId = mysqli_insert_id($con); // Get the last inserted booking ID
+
+    // Initialize Paystack payment
+    $paystack = new Yabacon\Paystack('sk_test_73ef2c03b79c54431a14e36f8582f59a7f332780'); // Replace with your Paystack secret key
+    $reference = uniqid('txn_'); // Generate a unique transaction ID
+
+    try {
+        // Initialize the transaction with Paystack
+        $transaction = $paystack->transaction->initialize([
+            'email' => $email,
+            'amount' => $amountInKobo, // Use the amount in kobo
+            'reference' => $reference,
+            'callback_url' => 'http://localhost/Recent/carrental/payment_confirmation.php', // Replace with your domain
+            'metadata' => [
+                'booking_id' => $bookingId, // Pass booking ID to Paystack
+                'booking_no' => $bookingNo // Pass booking number to Paystack
+            ]
+        ]);
+
+        // Convert amount back to naira for database storage
+        $amountInNaira = $amountInKobo / 100;
+
+        // Save transaction to the database
+        $sql2 = "INSERT INTO transactions (userEmail, booking_id, transaction_id, amount, payment_status)
+                 VALUES ('$userEmail', '$bookingId', '$reference', '$amountInNaira', 'pending')";
+        if (mysqli_query($con, $sql2)) {
+            // Redirect to Paystack's payment page
+            header("Location: " . $transaction->data->authorization_url);
+            exit();
+        } else {
+            die("Database error: " . mysqli_error($con));
+        }
+    } catch (Exception $e) {
+        die('Paystack Error: ' . $e->getMessage());
+    }
+} else {
+    die("Database error: " . mysqli_error($con));
+}
+?>
+
+payment_confirmation.php :
+<?php
+session_start();
+include('includes/config.php');
+include('includes/header.php');
+require 'vendor/autoload.php'; // Include Paystack library
+
+// Check if the user is logged in
+if (!isset($_SESSION['login'])) {
+    die("You must be logged in to view this page. <a href='login.php'>Login here</a>.");
+}
+
+$userEmail = $_SESSION['login']; // Get the user email from the session
+
+// Verify the transaction with Paystack
+$paystack = new Yabacon\Paystack('sk_test_73ef2c03b79c54431a14e36f8582f59a7f332780'); // Replace with your Paystack secret key
+$reference = $_GET['reference'];
+
+try {
+    $transaction = $paystack->transaction->verify([
+        'reference' => $reference
+    ]);
+
+    if ($transaction->data->status === 'success') {
+        $status = 'success';
+        $message = "Payment Successful! Thank you for your purchase.";
+
+        // Get booking ID and number from Paystack metadata
+        $bookingId = $transaction->data->metadata->booking_id;
+        $bookingNo = $transaction->data->metadata->booking_no;
+
+        // Update the booking status and transaction_id in tblbooking
+        $sql = "UPDATE tblbooking SET payment_status='$status', Status=1 WHERE id='$bookingId'";
+        if (mysqli_query($con, $sql)) {
+            // Update the transaction status in the database
+            $sql2 = "UPDATE transactions SET payment_status='$status' WHERE transaction_id='$reference' AND userEmail='$userEmail'";
+            mysqli_query($con, $sql2);
+
+            // Clear session variables
+            unset($_SESSION['bookingno']);
+            unset($_SESSION['useremail']);
+            unset($_SESSION['vhid']);
+            unset($_SESSION['fromdate']);
+            unset($_SESSION['todate']);
+            unset($_SESSION['message']);
+            unset($_SESSION['status']);
+
+            // Display success message
+            echo "<script>alert('$message');</script>";
+            echo "<script>window.location.href = 'my-booking.php';</script>";
+            exit();
+        } else {
+            die("Database error: " . mysqli_error($con));
+        }
+    } else {
+        $status = 'failed';
+        $message = "Payment Failed. Please try again.";
+        
+        // Update the transaction status in the database
+        $sql = "UPDATE transactions SET payment_status='$status' WHERE transaction_id='$reference' AND userEmail='$userEmail'";
+        mysqli_query($con, $sql);
+        
+        echo "<script>alert('$message');</script>";
+        echo "<script>window.location.href = 'my-booking.php';</script>";
+        exit();
+    }
+} catch (Exception $e) {
+    die('Error verifying payment: ' . $e->getMessage());
+}
+
+// Include the footer
+include('includes/footer.php');
+?>
+
+my-booking.php :
+<?php
+session_start();
+error_reporting(0);
+include('includes/config.php');
+if (strlen($_SESSION['login']) == 0) {
+  header('location:index.php');
+} else {
+?>
+  <!DOCTYPE HTML>
+  <html lang="en">
+
+  <head>
+
+    <title>Titiabiks Ventures - My Booking</title>
+    <!--Bootstrap -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
+    <!--Custome Style -->
+    <link rel="stylesheet" href="assets/css/style.css" type="text/css">
+    <!--OWL Carousel slider-->
+    <link rel="stylesheet" href="assets/css/owl.carousel.css" type="text/css">
+    <link rel="stylesheet" href="assets/css/owl.transitions.css" type="text/css">
+    <!--slick-slider -->
+    <link href="assets/css/slick.css" rel="stylesheet">
+    <!--bootstrap-slider -->
+    <link href="assets/css/bootstrap-slider.min.css" rel="stylesheet">
+    <!--FontAwesome Font Style -->
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <!-- SWITCHER -->
+    <link rel="stylesheet" id="switcher-css" type="text/css" href="assets/switcher/css/switcher.css" media="all" />
+    <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/red.css" title="red" media="all"
+      data-default-color="true" />
+    <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/orange.css" title="orange" media="all" />
+    <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/blue.css" title="blue" media="all" />
+    <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/pink.css" title="pink" media="all" />
+    <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/green.css" title="green" media="all" />
+    <link rel="alternate stylesheet" type="text/css" href="assets/switcher/css/purple.css" title="purple" media="all" />
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144"
+      href="assets/images/favicon-icon/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114"
+      href="assets/images/favicon-icon/apple-touch-icon-114-precomposed.html">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72"
+      href="assets/images/favicon-icon/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/images/favicon-icon/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="assets/images/favicon-icon/favicon.png">
+    <!-- Google-Font-->
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <!--Header-->
+    <?php include('includes/header.php'); ?>
+    <!--Page Header-->
+    <!-- /Header -->
+
+    <!--Page Header-->
+    <section class="page-header profile_page">
+      <div class="container">
+        <div class="page-header_wrap">
+          <div class="page-heading">
+            <h1>My Booking</h1>
+          </div>
+          <ul class="coustom-breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li>My Booking</li>
+          </ul>
+        </div>
+      </div>
+      <!-- Dark Overlay-->
+      <div class="dark-overlay"></div>
+    </section>
+    <!-- /Page Header-->
+
+    <?php
+    $useremail = $_SESSION['login'];
+    $sql = "SELECT * FROM tblusers WHERE EmailId = '$useremail'";
+    $query = mysqli_query($con, $sql);
+    if (mysqli_num_rows($query) > 0) {
+      while ($result = mysqli_fetch_assoc($query)) { ?>
+        <section class="user_profile inner_pages">
+          <div class="container">
+            <div class="user_profile_info gray-bg padding_4x4_40">
+              <div class="upload_user_logo"> <img src="assets/images/dealer-logo.jpg" alt="image">
+              </div>
+
+              <div class="dealer_info">
+                <h5><?php echo htmlentities($result['FullName']); ?></h5>
+                <p><?php echo htmlentities($result['Address']); ?><br>
+                  <?php echo htmlentities($result['City']); ?>&nbsp;<?php echo htmlentities($result['Country']); ?></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3 col-sm-3">
+                <?php include('includes/sidebar2.php'); ?>
+
+                <div class="col-md-8 col-sm-8">
+                  <div class="profile_wrap">
+                    <h5 class="uppercase underline">My Bookings </h5>
+                    <div class="my_vehicles_list">
+                      <ul class="vehicle_listing">
+                        <?php
+                        // Query to fetch booking details
+
+                        $sql = "SELECT tblvehicles.Vimage1 AS Vimage1, tblvehicles.VehiclesTitle, tblvehicles.id AS vid, tblbrands.BrandName, tblbooking.FromDate, tblbooking.ToDate, tblbooking.message, tblbooking.Status, tblvehicles.PricePerDay, DATEDIFF(tblbooking.ToDate, tblbooking.FromDate) AS totaldays, tblbooking.BookingNumber, tblbooking.transaction_id, tblbooking.payment_status, tblbooking.pickup FROM tblbooking JOIN tblvehicles ON tblbooking.VehicleId = tblvehicles.id JOIN tblbrands ON tblbrands.id = tblvehicles.VehiclesBrand WHERE tblbooking.userEmail = '$useremail' ORDER BY tblbooking.id DESC";
+                        $query = mysqli_query($con, $sql);
+
+                        if (mysqli_num_rows($query) > 0) {
+                          while ($result = mysqli_fetch_assoc($query)) {
+                            $bookingNo = $result['BookingNumber'];
+                            $transactionId = $result['transaction_id'];
+                            $paymentStatus = $result['payment_status'] === 'success' ? 'Confirmed' : 'Not Confirmed Yet';
+                            $vehicleTitle = $result['VehiclesTitle'];
+                            $brandName = $result['BrandName'];
+                            $fromDate = $result['FromDate'];
+                            $toDate = $result['ToDate'];
+                            $message = $result['message'];
+                            $totalDays = $result['totaldays'];
+                            $pricePerDay = $result['PricePerDay'];
+                            $totalAmount = $totalDays * $pricePerDay; ?>
+
+                            <li>
+                              <h4 style="color:red">Booking No #<?php echo htmlentities($result['BookingNumber']); ?></h4>
+                              <div class="vehicle_img"> <a
+                                  href="vehical-details.php?vhid=<?php echo htmlentities($result['vid']); ?>"><img
+                                    src="admin/img/vehicleimages/<?php echo htmlentities($result['Vimage1']); ?>" alt="image"></a>
+                              </div>
+                              <div class="vehicle_title">
+
+                                <h6><a href="vehical-details.php?vhid=<?php echo htmlentities($result['vid']); ?>">
+                                    <?php echo htmlentities($result['BrandName']); ?>,
+                                    <?php echo htmlentities($result['VehiclesTitle']); ?></a></h6>
+                                <p><b>From </b> <?php echo htmlentities($result['FromDate']); ?> <b>To </b>
+                                  <?php echo htmlentities($result['ToDate']); ?></p>
+                                <div style="float: left">
+                                  <p><b>Message:</b> <?php echo htmlentities($result['message']); ?> </p>
+                                  <p><b>Transaction ID:</b> <?php echo htmlentities($result['transaction_id']); ?></p>
+                                  <p><b>Payment Status:</b> <?php echo htmlentities($paymentStatus); ?></p>
+                                  <p><b>Pickup Location:</b> <?php echo htmlentities($result['pickup']); ?></p>
+                                </div>
+                              </div>
+
+                              <!-- Status Section -->
+
+                              <div class="vehicle_status">
+                                <?php if ($paymentStatus === 'Confirmed') { ?>
+                                  <a href="#" class="btn outline btn-xs active-btn">Confirmed</a>
+                                  <div class="clearfix"></div>
+                                <?php } else { ?>
+                                  <a href="repay_process.php?bookingno=<?php echo htmlentities($result['BookingNumber']); ?>" class="btn outline btn-xs">Pay To Confirm</a>
+                                  <div class="clearfix"></div>
+                                <?php } ?>
+                              </div>
+
+                              <!-- Status Section -->
+
+                            </li>
+
+                            <h5 style="color:blue">Invoice</h5>
+                            <table>
+                              <tr>
+                                <th>Car Name</th>
+                                <th>From Date</th>
+                                <th>To Date</th>
+                                <th>Total Days</th>
+                                <th>Rent / Day</th>
+                              </tr>
+                              <tr>
+                                <td><?php echo htmlentities($result['VehiclesTitle']); ?>,
+                                  <?php echo htmlentities($result['BrandName']); ?>
+                                </td>
+                                <td><?php echo htmlentities($result['FromDate']); ?></td>
+                                <td> <?php echo htmlentities($result['ToDate']); ?></td>
+                                <td><?php echo htmlentities($tds = $result['totaldays']); ?></td>
+                                <td> <?php echo htmlentities($ppd = $result['PricePerDay']); ?></td>
+                              </tr>
+                              <tr>
+                                <th colspan="4" style="text-align:center;"> Grand Total</th>
+                                <th>₦<?php echo htmlentities($tds * $ppd); ?></th>
+                              </tr>
+                            </table>
+                            <hr />
+                          <?php }
+                        } else { ?>
+                          <h5 align="center" style="color:red">No booking yet</h5>
+                        <?php } ?>
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--/my-vehicles-->
+        <?php include('includes/footer.php'); ?>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/bootstrap.min.js"></script>
+        <script src="assets/js/interface.js"></script>
+        <!--Switcher-->
+        <script src="assets/switcher/js/switcher.js"></script>
+        <!--bootstrap-slider-JS-->
+        <script src="assets/js/bootstrap-slider.min.js"></script>
+        <!--Slider-JS-->
+        <script src="assets/js/slick.min.js"></script>
+        <script src="assets/js/owl.carousel.min.js"></script>
+  </body>
+
+  </html>
+<?php }
+    }
+  } ?>
+
+repay_process.php  :
+<?php
+session_start();
+include 'includes/config.php';
+require 'vendor/autoload.php'; // Include Paystack library
+
+// Check if the user is logged in
+if (!isset($_SESSION['login'])) {
+    die("You must be logged in to make a payment. <a href='login.php'>Login here</a>.");
+}
+
+$userEmail = $_SESSION['login']; // Get the user email from the session
+$bookingNo = $_GET['bookingno'];
+
+// Get booking details
+$sql = "SELECT b.*, v.PricePerDay, v.VehiclesTitle, DATEDIFF(b.ToDate, b.FromDate) as days 
+        FROM tblbooking b 
+        JOIN tblvehicles v ON b.VehicleId = v.id 
+        WHERE b.BookingNumber = '$bookingNo' AND b.userEmail = '$userEmail'";
+$result = mysqli_query($con, $sql);
+$booking = mysqli_fetch_assoc($result);
+
+if (!$booking) {
+    die("Booking not found or you don't have permission to access it.");
+}
+
+// Calculate amount in kobo
+$amountInNaira = $booking['PricePerDay'] * $booking['days'];
+$amountInKobo = $amountInNaira * 100;
+
+// Initialize Paystack payment
+$paystack = new Yabacon\Paystack('sk_test_73ef2c03b79c54431a14e36f8582f59a7f332780'); // Replace with your Paystack secret key
+$reference = uniqid('txn_'); // Generate a unique transaction ID
+
+try {
+    // Initialize the transaction with Paystack
+    $transaction = $paystack->transaction->initialize([
+        'email' => $userEmail,
+        'amount' => $amountInKobo,
+        'reference' => $reference,
+        'callback_url' => 'http://localhost/Recent/carrental/payment_confirmation.php', // Different confirmation page for repayments
+        'metadata' => [
+            'booking_id' => $booking['id'],
+            'booking_no' => $bookingNo,
+            'vehicle_title' => $booking['VehiclesTitle'],
+            'from_date' => $booking['FromDate'],
+            'to_date' => $booking['ToDate'],
+            'days' => $booking['days'],
+            'amount' => $amountInNaira
+        ]
+    ]);
+
+    // Update the booking with new transaction ID
+    $sql = "UPDATE tblbooking SET transaction_id = '$reference', payment_status = 'pending' WHERE BookingNumber = '$bookingNo'";
+    mysqli_query($con, $sql);
+
+    // Save transaction to the database
+    $sql2 = "INSERT INTO transactions (userEmail, booking_id, transaction_id, amount, payment_status)
+             VALUES ('$userEmail', '{$booking['id']}', '$reference', '$amountInNaira', 'pending')";
+    mysqli_query($con, $sql2);
+
+    // Store booking details in session for confirmation page
+    $_SESSION['repay_booking'] = [
+        'booking_no' => $bookingNo,
+        'vehicle_title' => $booking['VehiclesTitle'],
+        'from_date' => $booking['FromDate'],
+        'to_date' => $booking['ToDate'],
+        'days' => $booking['days'],
+        'amount' => $amountInNaira,
+        'transaction_id' => $reference
+    ];
+
+    // Redirect to Paystack's payment page
+    header("Location: " . $transaction->data->authorization_url);
+    exit();
+} catch (Exception $e) {
+    die('Paystack Error: ' . $e->getMessage());
+}
+?>

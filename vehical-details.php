@@ -4,11 +4,19 @@ include('includes/config.php');
 error_reporting(0);
 
 if (isset($_POST['submit'])) {
+
+  // Add this check at the beginning of your validation
+  if (!isset($_POST['terms'])) {
+    echo "<script>alert('You must accept the terms and conditions to proceed.');</script>";
+    echo "<script>window.location.href = window.location.href;</script>";
+    exit();
+  }
+
   $fromdate = $_POST['fromdate'];
   $todate = $_POST['todate'];
   $message = $_POST['message'];
   $useremail = $_SESSION['login'];
-  $status = 0;
+  $status = 0; // Payment pending
   $vhid = $_GET['vhid'];
   $bookingno = mt_rand(100000000, 999999999);
 
@@ -28,30 +36,25 @@ if (isset($_POST['submit'])) {
   $result1 = mysqli_query($con, $ret);
 
   if (mysqli_num_rows($result1) == 0) {
-    // Insert the booking
-    $sql = "INSERT INTO tblbooking (BookingNumber, userEmail, VehicleId, FromDate, ToDate, message, Status) 
-                VALUES ('$bookingno', '$useremail', '$vhid', '$fromdate', '$todate', '$message', '$status')";
-    $result = mysqli_query($con, $sql);
+    // Store booking details in session
+    $_SESSION['bookingno'] = $bookingno;
+    $_SESSION['useremail'] = $useremail;
+    $_SESSION['vhid'] = $vhid;
+    $_SESSION['fromdate'] = $fromdate;
+    $_SESSION['todate'] = $todate;
+    $_SESSION['message'] = $message;
+    $_SESSION['status'] = $status;
 
-    if ($result) {
-      // Redirect to payment form
-      $_SESSION['bookingno'] = $bookingno;
-      $_SESSION['vhid'] = $vhid;
-      $_SESSION['fromdate'] = $fromdate;
-      $_SESSION['todate'] = $todate;
-      $_SESSION['message'] = $message;
-      header("Location: payment_form.php");
-      exit();
-    } else {
-      echo "<script>alert('Something went wrong. Please try again');</script>";
-      echo "<script>window.location.href = window.location.href;</script>"; // Refresh the page
-    }
+    // Redirect to payment form
+    header("Location: payment_form.php");
+    exit();
   } else {
     echo "<script>alert('Car already booked for these days.');</script>";
     echo "<script>window.location.href = window.location.href;</script>"; // Refresh the page
   }
 }
 ?>
+
 
 <!DOCTYPE HTML>
 <html lang="en">
@@ -86,6 +89,13 @@ if (isset($_POST['submit'])) {
   <link rel="apple-touch-icon-precomposed" href="assets/images/favicon-icon/apple-touch-icon-57-precomposed.png">
   <link rel="shortcut icon" href="assets/images/favicon-icon/favicon.png">
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+  <style>
+    .checkbox label, .checkbox input[type="checkbox"] {
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+  </style>
 </head>
 
 <body>
@@ -249,18 +259,27 @@ if (isset($_POST['submit'])) {
               <h5><i class="fa fa-envelope" aria-hidden="true"></i>Book Now</h5>
             </div>
             <form method="post">
-              <div class="form-group">
-                <label>From Date:</label>
-                <input type="date" class="form-control" name="fromdate" required>
-              </div>
-              <div class="form-group">
-                <label>To Date:</label>
-                <input type="date" class="form-control" name="todate" required>
-              </div>
-              <div class="form-group">
-                <textarea rows="4" class="form-control" name="message" placeholder="Message" required></textarea>
-              </div>
+
               <?php if ($_SESSION['login']) { ?>
+                <div class="form-group">
+                  <label>From Date:</label>
+                  <input type="date" class="form-control" name="fromdate" required>
+                </div>
+                <div class="form-group">
+                  <label>To Date:</label>
+                  <input type="date" class="form-control" name="todate" required>
+                </div>
+                <div class="form-group">
+                  <textarea rows="4" class="form-control" name="message" placeholder="Message" required></textarea>
+                </div>
+                <div class="form-group">
+                  <div class="checkbox">
+                    <input type="checkbox" id="termsCheckbox" name="terms" required>
+                    <label for="termsCheckbox">
+                      I accept the <a href="terms.php" target="_blank">terms and conditions</a>
+                    </label>
+                  </div>
+                </div>
                 <div class="form-group">
                   <input type="submit" class="btn" name="submit" value="Book Now">
                 </div>

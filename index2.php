@@ -36,17 +36,20 @@ error_reporting(0);
   <style>
     /* Reservation Form Styles */
     .reservation-form {
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.9);
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       width: 100%;
+      /* Ensure it takes full width of its container */
       max-width: 1000px;
+      /* Increase max-width for larger devices */
       margin: 0 auto;
+      /* Center horizontally */
     }
 
     .reservation-form .form-title {
-      font-size: 4em;
+      font-size: 2em;
       color: var(--primary);
       text-align: center;
       margin-bottom: 30px;
@@ -200,14 +203,14 @@ error_reporting(0);
           <div class="col-lg-10 col-md-10">
             <!-- Make Reservation Form -->
             <div class="reservation-form">
-              <h2 class="form-title">RENT A CAR!!!</h2>
+              <h2 class="form-title">Make a Reservation</h2>
               <form action="car-listing.php" method="post">
                 <div class="form-grid">
                   <!-- Pick-up Date -->
                   <div class="form-group">
                     <label for="pickup-date">Pick-up Date</label>
                     <div class="input-icon">
-                      <input type="date" id="pickup-date" name="pickup-date" class="date-input">
+                      <input type="date" id="pickup-date" name="pickup-date" required class="date-input">
                       <i class="fa fa-calendar"></i>
                     </div>
                   </div>
@@ -223,14 +226,14 @@ error_reporting(0);
                   <div class="form-group">
                     <label for="pickup-location">Pick-up Location</label>
                     <div class="input-icon">
-                      <input type="text" id="pickup-location" name="pickup-location" placeholder="Enter location">
+                      <input type="text" id="pickup-location" name="pickup-location" placeholder="Enter location" required>
                       <i class="fa fa-map-marker"></i>
                     </div>
                   </div>
                   <!-- Vehicle Type -->
                   <div class="form-group">
                     <label for="vehicle-type">Vehicle Type</label>
-                    <select id="vehicle-type" name="vehicle-type">
+                    <select id="vehicle-type" name="vehicle-type" required>
                       <option value="">Select Vehicle</option>
                       <option value="sedan">Toyota</option>
                       <option value="suv">Honda</option>
@@ -383,8 +386,8 @@ error_reporting(0);
   <section class="section-padding gray-bg">
     <div class="container">
       <div class="section-header text-center">
-        <h2>RENT <span>THE BEST CARS</span></h2>
-        <p>Need a car for a short trip or long-term rental? Choose from our selection of economy, luxury, and SUV models at budget-friendly rates.</p>
+        <h2>Find the Best <span>Car For Rental</span></h2>
+        <p>Need a car for a short trip or long-term use? Choose from our range of economy, luxury, and SUV models at competitive rates.</p>
       </div>
       <div class="row">
 
